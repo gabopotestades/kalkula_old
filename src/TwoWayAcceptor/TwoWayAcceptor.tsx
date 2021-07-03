@@ -1,7 +1,10 @@
+import {useRef} from "react";
+
 const TwoWayAcceptor = () => {
+
     return ( 
         <div>
-            Two way
+            
         </div>
      );
 }

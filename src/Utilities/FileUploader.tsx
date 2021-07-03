@@ -19,7 +19,7 @@ const FileUploader = ({ parentCallback }: any) => {
 
     return ( 
         <div className="file-uploader">
-            <input type="file" ref={fileInput} onChange={handleChange} style={{display: "none"}}/>
+            <input type="file" ref={fileInput} onChange={handleChange} style={{display: "none"}} accept=".txt"/>
             <button onClick={handleClick} className="default-btn">Upload</button>
         </div>
     )

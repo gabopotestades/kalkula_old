@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import Navbar from './General/Navbar';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import TwoWayAcceptor from './TwoWayAcceptor/TwoWayAcceptor';

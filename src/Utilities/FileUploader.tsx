@@ -1,14 +1,26 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
-const FileUploader = () => {
+const FileUploader = ({ parentCallback }: any) => {
 
-    const handleFileInput = () => {
-        
-    }
+    const fileInput = useRef<HTMLInputElement>(null);
+
+    const handleClick = (event: any) => {
+        event.preventDefault();
+        fileInput.current?.click();
+    };
+
+    const handleChange = (event: any) => {
+        const fileReader = new FileReader();
+        fileReader.readAsText(event.target.files[0]);
+        fileReader.onloadend = () => {
+            parentCallback(fileReader.result);
+        }
+    };
 
     return ( 
         <div className="file-uploader">
-            <input type="file" onChange={handleFileInput}/>
+            <input type="file" ref={fileInput} onChange={handleChange} style={{display: "none"}}/>
+            <button onClick={handleClick} className="default-btn">Upload</button>
         </div>
     )
 }

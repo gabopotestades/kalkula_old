@@ -1,0 +1,37 @@
+.TwoWayAcceptor {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  justify-content: center;
+}
+
+.twaLegend {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.legendText {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.legendText label {
+  display: flex;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.twaTuple {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.twaTuple label {
+  padding: 0.5rem;
+  text-align: left;
+}

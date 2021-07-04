@@ -1,23 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './TwoWayAcceptor.scss'
 import FileUploader from "../Utilities/FileUploader";
 
 const TwoWayAcceptor = () => {
 
-    var hasUploaded:boolean = false;
-    const [textFile, setUploadedTextFile] = useState("");
+    const [hasUploaded, setHasUploaded] = useState<boolean>(false);
+    const [textFile, setUploadedTextFile] = useState<string>("");
 
-    const textFileCallback = (textFileUploaded: any) => {
+    useEffect(() => {
+        setHasUploaded(true);
+        console.log('text')
+        console.log(textFile)
+        parseTextFile(textFile);
+    }, [textFile])
+
+    const textFileCallback = (textFileUploaded: string) => {
         setUploadedTextFile(textFileUploaded);
-        hasUploaded = true;
+    }
+
+    const parseTextFile = (textFileToParse: string) => {
+        
     }
 
     const executeProgram = (event: any) => {
         event.preventDefault();
 
         if (!hasUploaded) {
-            
+            alert('No file uploaded.');
+            return;
         }
+
+        
 
     }
 

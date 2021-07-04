@@ -14,26 +14,29 @@
 }
 
 .navbar {
-  padding: 20px;
   display: flex;
   align-items: center;
-  max-width: 800px;
+  max-width: 60rem;
   margin: 0 auto;
   border-bottom: 1px solid #f2f2f2;
 }
+
 .navbar h1 {
   color: #bebebe;
   font-size: 3rem;
 }
+
 .navbar .links {
   margin-left: auto;
 }
+
 .navbar a {
   color: #bebebe;
   margin-left: 16px;
   text-decoration: none;
   padding: 6px;
 }
+
 .navbar a:hover {
   color: #807a7c;
 }

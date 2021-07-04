@@ -4,84 +4,138 @@ import FileUploader from "../Utilities/FileUploader";
 
 const TwoWayAcceptor = () => {
 
+    var hasUploaded:boolean = false;
     const [textFile, setUploadedTextFile] = useState("");
 
     const textFileCallback = (textFileUploaded: any) => {
         setUploadedTextFile(textFileUploaded);
+        hasUploaded = true;
+    }
+
+    const executeProgram = (event: any) => {
+        event.preventDefault();
+
+        if (!hasUploaded) {
+            
+        }
+
     }
 
     return ( 
         <div className="TwoWayAcceptor">
 
-            <div className="twaLegend">
+            <div className="twa-legend">
 
-                <div className="legendText">
-                    
-                    
-                    <label>
-                        <b className="symbol">X</b>&#8194;= input string
-                    </label>
-
-                    <label>
-                        <b className="symbol">M</b>&#8194;= (Q, S, P, I, F)
-                    </label>
-                    
-                    <label>
-                        <b className="symbol">Q</b>&#8194;= set of internal states
-                    </label>
-                    
-                    <label>
-                        <b className="symbol">S</b>&#8194;= input alphabet
-                    </label>
-                    
-                    <label>
-                        <b className="symbol">P</b>&#8194;= a program
-                    </label>
-                    
-                    <label>
-                        <b className="symbol">I</b>&#8194;= initial states
-                    </label>
-                    
-                    <label>
-                        <b className="symbol">F</b>&#8194;= final states
-                    </label>
-
-                </div>
+                <table className="twa-legend-table">         
+                    <thead>
+                        <tr>
+                            <th className="title"colSpan={2}>Formal Definition</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <td>Symbol</td>
+                            <td className="description">Description</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="symbol">M</td>
+                            <td className="description">(Q, S, P, I, F)</td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">X</td>
+                            <td className="description">input string</td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">Q</td>
+                            <td className="description">set of internal states</td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">S</td>
+                            <td className="description">input alphabet</td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">P</td>
+                            <td className="description">the program</td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">I</td>
+                            <td className="description">initial states</td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">F</td>
+                            <td className="description">final states</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <FileUploader parentCallback = { textFileCallback } />
+
             </div>
 
-            <div className="twaTuple">
+            <div className="twa-tuple">
 
-                <label>
-                    X
-                    <input type="text" name="txtInputString"/>
-                </label>
+                <table className="twa-tuple-table">
+                    <thead>
+                        <tr>
+                            <th className="title" colSpan={2}>Parsed Values</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <td className="symbol">Symbol</td>
+                            <td className="description">Values</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="symbol">X</td>
+                            <td className="description" id="x-description"></td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">Q</td>
+                            <td className="description" id="q-description"></td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">S</td>
+                            <td className="description" id="s-descripton"></td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">I</td>
+                            <td className="description" id="i-descripton"></td>
+                        </tr>
+                        <tr>
+                            <td className="symbol">F</td>
+                            <td className="description" id="f-descripton"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <label>
-                    Q
-                    <input type="text" name="txtInternalStates"/>
-                </label>
+                <button onClick={executeProgram} className="default-btn">Execute</button>
 
-                <label>
-                    S
-                    <input type="text" name="txtInputAlphabet"/>
-                </label>
+            </div>
 
-                <label>
-                    I
-                    <input type="text" name="txtInitialStates"/>
-                </label>
+            <div className="twa-program">
+                
+                <table className="twa-program-table">
+                    <thead>
+                        <tr>
+                            <td className="title">P</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="p-description"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <label>
-                    F
-                    <input type="text" name="txtFinalStates"/>
-                </label>
 
-                <label>
-                    P
-                    <textarea></textarea>
-                </label>
+                <div className="result-panel">
+                    <label className="result-label">Result: </label>
+                    <label className="result-value">ACCEPTED</label>
+                </div>
 
             </div>
         </div>

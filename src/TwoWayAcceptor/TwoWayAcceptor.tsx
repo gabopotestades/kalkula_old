@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import './TwoWayAcceptor.scss'
 import FileUploader from "../Utilities/FileUploader";
+import { isNullOrUndefined } from "../Utilities/GeneralHelpers";
 
 const TwoWayAcceptor = () => {
 
@@ -8,10 +9,16 @@ const TwoWayAcceptor = () => {
     const [textFile, setUploadedTextFile] = useState<string>("");
 
     useEffect(() => {
+
+        // Skip on mount or invalid file entry
+        if (isNullOrUndefined(textFile)){
+            setHasUploaded(false);
+            return;
+        }
+        
         setHasUploaded(true);
-        console.log('text')
-        console.log(textFile)
         parseTextFile(textFile);
+
     }, [textFile])
 
     const textFileCallback = (textFileUploaded: string) => {
@@ -19,7 +26,16 @@ const TwoWayAcceptor = () => {
     }
 
     const parseTextFile = (textFileToParse: string) => {
+        var linesInText: string[] = textFileToParse.split("\n");
+
+        if (linesInText.length < 7) {
+            setUploadedTextFile("");
+            alert("Incorrect number of lines in text file.");
+            return;
+        }
+
         
+
     }
 
     const executeProgram = (event: any) => {
@@ -29,8 +45,6 @@ const TwoWayAcceptor = () => {
             alert('No file uploaded.');
             return;
         }
-
-        
 
     }
 

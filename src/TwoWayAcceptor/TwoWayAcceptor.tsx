@@ -1,12 +1,24 @@
-import { useState, useEffect } from "react";
 import './TwoWayAcceptor.scss'
+import { useState, useEffect } from "react";
 import FileUploader from "../Utilities/FileUploader";
 import { isNullOrUndefined } from "../Utilities/GeneralHelpers";
 
 const TwoWayAcceptor = () => {
 
+    //Values for upload
     const [hasUploaded, setHasUploaded] = useState<boolean>(false);
     const [textFile, setUploadedTextFile] = useState<string>("");
+
+    // Values for center table
+    const [xValues, setxValues] = useState<string>("");
+    const [qValues, setqValues] = useState<string>("");
+    const [sValues, setsValues] = useState<string>("");
+    const [pValues, setpValues] = useState<string>("");
+    const [iValues, setiValues] = useState<string>("");
+    const [fValues, setfValues] = useState<string>("");
+    
+    // Values for creating the acceptor
+
 
     useEffect(() => {
 
@@ -21,20 +33,70 @@ const TwoWayAcceptor = () => {
 
     }, [textFile])
 
+    const removeSpacesAndConcat = (firstString: string, secondString: string): string => {
+        return firstString.trim().replace(/\s/g, "") + secondString.trim().replace(/\s/g, "")
+    }
+
     const textFileCallback = (textFileUploaded: string) => {
         setUploadedTextFile(textFileUploaded);
     }
 
     const parseTextFile = (textFileToParse: string) => {
+
         var linesInText: string[] = textFileToParse.split("\n");
 
+        // Check if number of lines follow syntax
         if (linesInText.length < 7) {
             setUploadedTextFile("");
             alert("Incorrect number of lines in text file.");
             return;
+        } 
+        
+        // Check if each line matches the syntax
+        const inputStringPattern: RegExp = /^\s*[Xx]\s*=(.*)\s*$/;
+        const allStatesPattern: RegExp = /^\s*[Qq]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+        const inputAlphabetPattern: RegExp = /^\s*[sS]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+        const initialStatesPattern: RegExp = /^\s*[iI]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+        const finalStatesPattern: RegExp = /^\s*[Ff]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+        const programPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\]$/;
+
+        var xValueInText: string = linesInText[0].trim();
+        var qValueInText: string = linesInText[1].trim();
+        var sValueInText: string = linesInText[2].trim();
+        var iValueInText: string = linesInText[3].trim();
+        var fValueInText: string = linesInText[4].trim();
+        var pValueInText: string = linesInText[5].trim();
+
+        if (!inputStringPattern.test(xValueInText)) {
+            alert("Incorrect syntax for input string X (line 1).");
+            return;
+        } else if (!allStatesPattern.test(qValueInText)) {
+            alert("Incorrect syntax for all states Q (line 2).");
+            return;
+        } else if (!inputAlphabetPattern.test(sValueInText)) {
+            alert("Incorrect syntax for input alphabet S (line 3).");
+            return;
+        } else if (!initialStatesPattern.test(iValueInText)) {
+            alert("Incorrect syntax for initial states I (line 4).");
+            return;
+        } else if (!finalStatesPattern.test(fValueInText)) {
+            alert("Incorrect syntax for final states F (line 5).");
+            return;
+        } else if (pValueInText.toLowerCase() !== "p") {
+            alert("No symbol 'P' (line 6).");
+            return;
         }
 
-        
+        let qValuesForUI = qValueInText.match(allStatesPattern);
+        let sValuesForUI = sValueInText.match(inputAlphabetPattern);
+        let iValuesForUI = iValueInText.match(initialStatesPattern);
+        let fValuesForUI = fValueInText.match(finalStatesPattern);
+
+        setxValues(xValueInText.match(inputStringPattern)![1]);
+        setqValues(removeSpacesAndConcat(qValuesForUI![1], qValuesForUI![2]));
+        setsValues(removeSpacesAndConcat(sValuesForUI![1], sValuesForUI![2]));
+        setiValues(removeSpacesAndConcat(iValuesForUI![1], iValuesForUI![2]));
+        setfValues(removeSpacesAndConcat(fValuesForUI![1], fValuesForUI![2]));
 
     }
 
@@ -118,23 +180,23 @@ const TwoWayAcceptor = () => {
                     <tbody>
                         <tr>
                             <td className="symbol">X</td>
-                            <td className="description" id="x-description"></td>
+                            <td className="description">{ xValues }</td>
                         </tr>
                         <tr>
                             <td className="symbol">Q</td>
-                            <td className="description" id="q-description"></td>
+                            <td className="description">{ qValues }</td>
                         </tr>
                         <tr>
                             <td className="symbol">S</td>
-                            <td className="description" id="s-descripton"></td>
+                            <td className="description">{ sValues }</td>
                         </tr>
                         <tr>
                             <td className="symbol">I</td>
-                            <td className="description" id="i-descripton"></td>
+                            <td className="description">{ iValues }</td>
                         </tr>
                         <tr>
                             <td className="symbol">F</td>
-                            <td className="description" id="f-descripton"></td>
+                            <td className="description">{ fValues }</td>
                         </tr>
                     </tbody>
                 </table>
@@ -153,7 +215,7 @@ const TwoWayAcceptor = () => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td id="p-description"></td>
+                            <td id="p-description">{ pValues }</td>
                         </tr>
                     </tbody>
                 </table>

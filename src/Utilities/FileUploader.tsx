@@ -12,11 +12,11 @@ const FileUploader = ({ parentCallback }: any) => {
 
     const handleChange = (event: any) => {
         const fileReader = new FileReader();
-        fileReader.readAsText(event.target.files[0]);
         fileReader.onloadend = () => {
             if (!isNullOrUndefined(fileReader.result))
                 parentCallback(fileReader.result);
         }
+        fileReader.readAsText(event.target.files[0]);
     };
 
     return ( 

@@ -1,7 +1,7 @@
 import './TwoWayAcceptor.scss'
 import { useState, useEffect } from "react";
 import FileUploader from "../Utilities/FileUploader";
-import { isNullOrUndefined } from "../Utilities/GeneralHelpers";
+import { isNullOrUndefined, isEmptyObject } from "../Utilities/GeneralHelpers";
 import { States } from '../Interfaces/States';
 import { CharactersPerState } from '../Interfaces/CharactersPerState';
 
@@ -20,8 +20,10 @@ const TwoWayAcceptor = () => {
     const [fValues, setfValues] = useState<string>("");
     
     // Values for creating the acceptor
+    const [parsedStates, setParsedStates] = useState<States>({});
 
 
+    // On text file change
     useEffect(() => {
 
         // Skip on mount or invalid file entry
@@ -34,6 +36,15 @@ const TwoWayAcceptor = () => {
         parseTextFile(textFile);
 
     }, [textFile])
+
+    // Testing if parsedStates has been changes
+    useEffect(() => {
+
+        // Skip on mount or empty
+        if (isEmptyObject(parsedStates))
+            return;
+
+    }, [parsedStates])
 
     const removeSpacesAndConcat = (firstString: string, secondString: string): string => {
         return firstString.trim().replace(/\s/g, "") + secondString.trim().replace(/\s/g, "")
@@ -138,8 +149,6 @@ const TwoWayAcceptor = () => {
             return; 
         }
 
-        console.log(statesToBeCreated);
-
         let qValuesForUI = qValueInText.match(allStatesPattern);
         let sValuesForUI = sValueInText.match(inputAlphabetPattern);
         let iValuesForUI = iValueInText.match(initialStatesPattern);
@@ -151,6 +160,7 @@ const TwoWayAcceptor = () => {
         setiValues(removeSpacesAndConcat(iValuesForUI![1], iValuesForUI![2]));
         setfValues(removeSpacesAndConcat(fValuesForUI![1], fValuesForUI![2]));
         setpValues(pStates.join("\n"));
+        setParsedStates(statesToBeCreated);
 
     }
 

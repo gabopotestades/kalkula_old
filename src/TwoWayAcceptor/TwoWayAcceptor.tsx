@@ -2,6 +2,8 @@ import './TwoWayAcceptor.scss'
 import { useState, useEffect } from "react";
 import FileUploader from "../Utilities/FileUploader";
 import { isNullOrUndefined } from "../Utilities/GeneralHelpers";
+import { States } from '../Interfaces/States';
+import { CharactersPerState } from '../Interfaces/CharactersPerState';
 
 const TwoWayAcceptor = () => {
 
@@ -58,7 +60,7 @@ const TwoWayAcceptor = () => {
         const inputAlphabetPattern: RegExp = /^\s*[sS]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
         const initialStatesPattern: RegExp = /^\s*[iI]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
         const finalStatesPattern: RegExp = /^\s*[Ff]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
-        const programPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\]$/;
+        const programPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\]\s*((right|left)((\s*\([#a-zA-Z0-9_]+,\s*[#a-zA-Z0-9_]+\)\s*)+)|HELL|ACCEPT)\s*$/;
 
         var xValueInText: string = linesInText[0].trim();
         var qValueInText: string = linesInText[1].trim();
@@ -66,6 +68,8 @@ const TwoWayAcceptor = () => {
         var iValueInText: string = linesInText[3].trim();
         var fValueInText: string = linesInText[4].trim();
         var pValueInText: string = linesInText[5].trim();
+        var pStates: string[] = linesInText.slice(6);
+        var pStatesToBeAdded: string[];
 
         if (!inputStringPattern.test(xValueInText)) {
             alert("Incorrect syntax for input string X (line 1).");
@@ -87,16 +91,66 @@ const TwoWayAcceptor = () => {
             return;
         }
 
+        var line: number = 7;
+        var passed: boolean = true;
+        var statesToBeCreated: States = {};
+        pStates.every(state => {
+
+            if (!programPattern.test(state.trim())) {
+                alert(`Incorrect syntax for line ${line}.`);
+                passed = false;
+                return false;
+            }
+
+            let programMatchedPattern: RegExpMatchArray = state.match(programPattern)!;
+            let stateName =  programMatchedPattern[1].trim();
+            let statesInput = programMatchedPattern[2].trim();
+
+            if (statesInput === 'HELL' || statesInput === 'ACCEPT') {
+                statesToBeCreated[stateName] = statesInput;
+            } else {
+                let stateDirection: string = programMatchedPattern[3];
+                let stateTransitions: string[] = programMatchedPattern[4].split(/[()]+/)
+                                        .filter(e => e !== " " && e !== "\r");
+                let characterStates: CharactersPerState[] = [];
+
+                stateTransitions.forEach(characterPerState => {
+                    let splittedCharacters: string[] = characterPerState.split(',');
+                    let charState: CharactersPerState = {
+                        character : splittedCharacters[0].trim(),
+                        transitionState : splittedCharacters[1].trim(),
+                        transitionDirection : stateDirection
+                    };
+
+                    characterStates.push(charState);
+
+                });
+
+                statesToBeCreated[stateName] = characterStates!; 
+                
+            }
+            
+            line++;
+            return true;
+        });
+
+        if (!passed) { 
+            return; 
+        }
+
+        console.log(statesToBeCreated);
+
         let qValuesForUI = qValueInText.match(allStatesPattern);
         let sValuesForUI = sValueInText.match(inputAlphabetPattern);
         let iValuesForUI = iValueInText.match(initialStatesPattern);
         let fValuesForUI = fValueInText.match(finalStatesPattern);
-
+        
         setxValues(xValueInText.match(inputStringPattern)![1]);
         setqValues(removeSpacesAndConcat(qValuesForUI![1], qValuesForUI![2]));
         setsValues(removeSpacesAndConcat(sValuesForUI![1], sValuesForUI![2]));
         setiValues(removeSpacesAndConcat(iValuesForUI![1], iValuesForUI![2]));
         setfValues(removeSpacesAndConcat(fValuesForUI![1], fValuesForUI![2]));
+        setpValues(pStates.join("\n"));
 
     }
 

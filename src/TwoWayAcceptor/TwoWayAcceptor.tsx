@@ -20,7 +20,13 @@ const TwoWayAcceptor = () => {
     const [fValues, setfValues] = useState<string>("");
     
     // Values for creating the acceptor
+    const [xScannedString, setXScannedString] = useState<string>("");
+    const [initialStatesList, setInitialStatesList] = useState<string[]>([]);
+    const [finalStatesList, setFinalStatesList] = useState<string[]>([]);
     const [parsedStates, setParsedStates] = useState<States>({});
+
+    // Value for result
+    const [executeResult, setExecuteResult] = useState<string>("__________");
 
 
     // On text file change
@@ -31,20 +37,140 @@ const TwoWayAcceptor = () => {
             setHasUploaded(false);
             return;
         }
+
         
+        const parseTextFile = (textFileToParse: string) => {
+
+            var linesInText: string[] = textFileToParse.split("\n");
+    
+            // Check if number of lines follow syntax
+            if (linesInText.length < 7) {
+                setUploadedTextFile("");
+                alert("Incorrect number of lines in text file.");
+                return;
+            } 
+            
+            // Check if each line matches the syntax
+            const inputStringPattern: RegExp = /^\s*[Xx]\s*=(.*)\s*$/;
+            const allStatesPattern: RegExp = /^\s*[Qq]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+            const inputAlphabetPattern: RegExp = /^\s*[sS]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+            const initialStatesPattern: RegExp = /^\s*[iI]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+            const finalStatesPattern: RegExp = /^\s*[Ff]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
+            const programPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\]\s*((right|left)((\s*\([#a-zA-Z0-9_]+,\s*[#a-zA-Z0-9_]+\)\s*)+)|REJECT|HELL|ACCEPT)\s*$/;
+    
+            var xValueInText: string = linesInText[0].trim();
+            var qValueInText: string = linesInText[1].trim();
+            var sValueInText: string = linesInText[2].trim();
+            var iValueInText: string = linesInText[3].trim();
+            var fValueInText: string = linesInText[4].trim();
+            var pValueInText: string = linesInText[5].trim();
+            var pStates: string[] = linesInText.slice(6);
+    
+            if (!inputStringPattern.test(xValueInText)) {
+                alert("Incorrect syntax for input string X (line 1).");
+                return;
+            } else if (!allStatesPattern.test(qValueInText)) {
+                alert("Incorrect syntax for all states Q (line 2).");
+                return;
+            } else if (!inputAlphabetPattern.test(sValueInText)) {
+                alert("Incorrect syntax for input alphabet S (line 3).");
+                return;
+            } else if (!initialStatesPattern.test(iValueInText)) {
+                alert("Incorrect syntax for initial states I (line 4).");
+                return;
+            } else if (!finalStatesPattern.test(fValueInText)) {
+                alert("Incorrect syntax for final states F (line 5).");
+                return;
+            } else if (pValueInText.toLowerCase() !== "p") {
+                alert("No symbol 'P' (line 6).");
+                return;
+            }
+    
+            var line: number = 7;
+            var passed: boolean = true;
+            var statesToBeCreated: States = {};
+            pStates.every(state => {
+    
+                if (!programPattern.test(state.trim())) {
+                    alert(`Incorrect syntax for line ${line}.`);
+                    setParsedStates({});
+                    passed = false;
+                    return false;
+                }
+    
+                let programMatchedPattern: RegExpMatchArray = state.match(programPattern)!;
+                let stateName =  programMatchedPattern[1].trim();
+                let statesInput = programMatchedPattern[2].trim();
+    
+                if (statesInput === 'HELL' || statesInput === 'ACCEPT') {
+                    statesToBeCreated[stateName] = statesInput;
+                } else {
+                    let stateDirection: string = programMatchedPattern[3];
+                    let stateTransitions: string[] = programMatchedPattern[4].split(/[()]+/)
+                                            .filter(e => e !== " " && e !== "\r");
+                    let charState: CharactersPerState = {};
+    
+                    stateTransitions.forEach(characterPerState => {
+                        let splittedCharacters: string[] = characterPerState.split(',');
+                        charState[splittedCharacters[0].trim()] = {
+                            transitionState : splittedCharacters[1].trim(),
+                            transitionDirection : stateDirection
+                        };
+    
+                    });
+
+                    statesToBeCreated[stateName] = charState!; 
+                    
+                }
+                
+                line++;
+                return true;
+            });
+    
+            if (!passed) { 
+                return; 
+            }
+    
+            // Set values to be displayed in the UI
+            let qValuesForUI = qValueInText.match(allStatesPattern);
+            let sValuesForUI = sValueInText.match(inputAlphabetPattern);
+            let iValuesForUI = iValueInText.match(initialStatesPattern);
+            let fValuesForUI = fValueInText.match(finalStatesPattern);
+            
+            setxValues(xValueInText.match(inputStringPattern)![1]);
+            setqValues(removeSpacesAndConcat(qValuesForUI![1], qValuesForUI![2]));
+            setsValues(removeSpacesAndConcat(sValuesForUI![1], sValuesForUI![2]));
+            setiValues(removeSpacesAndConcat(iValuesForUI![1], iValuesForUI![2]));
+            setfValues(removeSpacesAndConcat(fValuesForUI![1], fValuesForUI![2]));
+            setpValues(pStates.join("\n"));
+    
+            // Set values to be used for execution
+            let tempInitialStatesList: string[] = removeSpacesAndConcat(iValuesForUI![1], iValuesForUI![2]).split(",");
+            tempInitialStatesList.forEach(item => {
+                item = item.trim();
+            });
+    
+            let tempFinalStatesList: string[] = removeSpacesAndConcat(fValuesForUI![1], fValuesForUI![2]).split(",");
+            tempFinalStatesList.forEach(item => {
+                item = item.trim();
+            });
+    
+            setInitialStatesList(tempInitialStatesList);
+            setFinalStatesList(tempFinalStatesList);
+            setParsedStates(statesToBeCreated);
+    
+        }
+   
         setHasUploaded(true);
         parseTextFile(textFile);
 
     }, [textFile])
 
-    // Testing if parsedStates has been changes
     useEffect(() => {
+   
+        setXScannedString(`#${xValues}#`)
 
-        // Skip on mount or empty
-        if (isEmptyObject(parsedStates))
-            return;
-
-    }, [parsedStates])
+    }, [xValues])
 
     const removeSpacesAndConcat = (firstString: string, secondString: string): string => {
         return firstString.trim().replace(/\s/g, "") + secondString.trim().replace(/\s/g, "")
@@ -54,123 +180,73 @@ const TwoWayAcceptor = () => {
         setUploadedTextFile(textFileUploaded);
     }
 
-    const parseTextFile = (textFileToParse: string) => {
-
-        var linesInText: string[] = textFileToParse.split("\n");
-
-        // Check if number of lines follow syntax
-        if (linesInText.length < 7) {
-            setUploadedTextFile("");
-            alert("Incorrect number of lines in text file.");
-            return;
-        } 
-        
-        // Check if each line matches the syntax
-        const inputStringPattern: RegExp = /^\s*[Xx]\s*=(.*)\s*$/;
-        const allStatesPattern: RegExp = /^\s*[Qq]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
-        const inputAlphabetPattern: RegExp = /^\s*[sS]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
-        const initialStatesPattern: RegExp = /^\s*[iI]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
-        const finalStatesPattern: RegExp = /^\s*[Ff]\s*=\s*\{\s*([a-zA-Z0-9_]+)((\s*,\s*[a-zA-Z0-9_]+)*\s*)\s*\}\s*$/;
-        const programPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\]\s*((right|left)((\s*\([#a-zA-Z0-9_]+,\s*[#a-zA-Z0-9_]+\)\s*)+)|HELL|ACCEPT)\s*$/;
-
-        var xValueInText: string = linesInText[0].trim();
-        var qValueInText: string = linesInText[1].trim();
-        var sValueInText: string = linesInText[2].trim();
-        var iValueInText: string = linesInText[3].trim();
-        var fValueInText: string = linesInText[4].trim();
-        var pValueInText: string = linesInText[5].trim();
-        var pStates: string[] = linesInText.slice(6);
-        var pStatesToBeAdded: string[];
-
-        if (!inputStringPattern.test(xValueInText)) {
-            alert("Incorrect syntax for input string X (line 1).");
-            return;
-        } else if (!allStatesPattern.test(qValueInText)) {
-            alert("Incorrect syntax for all states Q (line 2).");
-            return;
-        } else if (!inputAlphabetPattern.test(sValueInText)) {
-            alert("Incorrect syntax for input alphabet S (line 3).");
-            return;
-        } else if (!initialStatesPattern.test(iValueInText)) {
-            alert("Incorrect syntax for initial states I (line 4).");
-            return;
-        } else if (!finalStatesPattern.test(fValueInText)) {
-            alert("Incorrect syntax for final states F (line 5).");
-            return;
-        } else if (pValueInText.toLowerCase() !== "p") {
-            alert("No symbol 'P' (line 6).");
-            return;
-        }
-
-        var line: number = 7;
-        var passed: boolean = true;
-        var statesToBeCreated: States = {};
-        pStates.every(state => {
-
-            if (!programPattern.test(state.trim())) {
-                alert(`Incorrect syntax for line ${line}.`);
-                passed = false;
-                return false;
-            }
-
-            let programMatchedPattern: RegExpMatchArray = state.match(programPattern)!;
-            let stateName =  programMatchedPattern[1].trim();
-            let statesInput = programMatchedPattern[2].trim();
-
-            if (statesInput === 'HELL' || statesInput === 'ACCEPT') {
-                statesToBeCreated[stateName] = statesInput;
-            } else {
-                let stateDirection: string = programMatchedPattern[3];
-                let stateTransitions: string[] = programMatchedPattern[4].split(/[()]+/)
-                                        .filter(e => e !== " " && e !== "\r");
-                let characterStates: CharactersPerState[] = [];
-
-                stateTransitions.forEach(characterPerState => {
-                    let splittedCharacters: string[] = characterPerState.split(',');
-                    let charState: CharactersPerState = {
-                        character : splittedCharacters[0].trim(),
-                        transitionState : splittedCharacters[1].trim(),
-                        transitionDirection : stateDirection
-                    };
-
-                    characterStates.push(charState);
-
-                });
-
-                statesToBeCreated[stateName] = characterStates!; 
-                
-            }
-            
-            line++;
-            return true;
-        });
-
-        if (!passed) { 
-            return; 
-        }
-
-        let qValuesForUI = qValueInText.match(allStatesPattern);
-        let sValuesForUI = sValueInText.match(inputAlphabetPattern);
-        let iValuesForUI = iValueInText.match(initialStatesPattern);
-        let fValuesForUI = fValueInText.match(finalStatesPattern);
-        
-        setxValues(xValueInText.match(inputStringPattern)![1]);
-        setqValues(removeSpacesAndConcat(qValuesForUI![1], qValuesForUI![2]));
-        setsValues(removeSpacesAndConcat(sValuesForUI![1], sValuesForUI![2]));
-        setiValues(removeSpacesAndConcat(iValuesForUI![1], iValuesForUI![2]));
-        setfValues(removeSpacesAndConcat(fValuesForUI![1], fValuesForUI![2]));
-        setpValues(pStates.join("\n"));
-        setParsedStates(statesToBeCreated);
-
-    }
-
     const executeProgram = (event: any) => {
         event.preventDefault();
 
         if (!hasUploaded) {
             alert('No file uploaded.');
             return;
+        } else if (isEmptyObject(parsedStates)) {
+            alert('The uploaded text file was not successfully parsed.')
+            return;
         }
+
+        // Set the initial state as the current state
+        let currentState: string = initialStatesList[0];
+        let programResult: string = "REJECTED"; 
+        let stringIndex: number = 1; 
+
+        // console.log('Input string');
+        // console.log(xScannedString);
+        // console.log('Current state');
+        // console.log(currentState);
+        console.log('Parsed states:');
+        console.log(parsedStates);
+        // console.log('Current parsed state:');
+        // console.log(parsedStates[currentState]);
+
+        let currentParsedState = parsedStates[currentState];
+        let rejectionKeywords:string[] = ["HELL", "REJECT"]
+
+        while (!rejectionKeywords.includes(currentParsedState as string)) {
+
+            let characterToBeScanned = xScannedString[stringIndex];
+            currentParsedState = parsedStates[currentState];
+            console.log('Current parsed state');
+            console.log(currentParsedState);
+
+            console.log(rejectionKeywords.includes(currentParsedState as string))
+
+            // If accepting or final state, stop the loop
+            if (currentParsedState === "ACCEPT") {
+                programResult = "ACCEPTED";
+                break;
+            }
+            // Else rejected state, stop the loop
+            else if (rejectionKeywords.includes(currentParsedState as string)) {
+                break;
+            }
+
+            // Proceed to changing states
+            let stateTransitions: CharactersPerState = currentParsedState as CharactersPerState;
+
+            // console.log('Current state');
+            // console.log(currentState);
+            // console.log(stateTransitions[characterToBeScanned]);
+            // console.log('================================');
+
+            let currentTransition: any = stateTransitions[characterToBeScanned];
+            currentState = currentTransition.transitionState;       
+
+            if (currentTransition.transitionDirection === 'right') {
+                stringIndex++;
+            } else {
+                stringIndex--;
+            }
+
+        } 
+
+        setExecuteResult(programResult);
 
     }
 
@@ -287,10 +363,11 @@ const TwoWayAcceptor = () => {
 
                 <div className="result-panel">
                     <label className="result-label">Result: </label>
-                    <label className="result-value">ACCEPTED</label>
+                    <label className="result-value">{ executeResult }</label>
                 </div>
 
             </div>
+        
         </div>
      );
 }

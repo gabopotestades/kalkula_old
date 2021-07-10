@@ -16,7 +16,9 @@ const FileUploader = ({ parentCallback }: any) => {
             if (!isNullOrUndefined(fileReader.result))
                 parentCallback(fileReader.result);
         }
-        fileReader.readAsText(event.target.files[0]);
+        
+        if (!isNullOrUndefined(event.target.files[0]))
+            fileReader.readAsText(event.target.files[0]);
     };
 
     return ( 

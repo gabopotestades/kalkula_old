@@ -1,5 +1,6 @@
 export interface CharactersPerState {
-     character: string;
-     transitionState: string;
-     transitionDirection: string;
+     [key: string]: {
+          transitionState: string;
+          transitionDirection: string;
+     }
 }

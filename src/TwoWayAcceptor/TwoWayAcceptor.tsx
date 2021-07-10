@@ -22,7 +22,6 @@ const TwoWayAcceptor = () => {
     // Values for creating the acceptor
     const [xScannedString, setXScannedString] = useState<string>("");
     const [initialStatesList, setInitialStatesList] = useState<string[]>([]);
-    const [finalStatesList, setFinalStatesList] = useState<string[]>([]);
     const [parsedStates, setParsedStates] = useState<States>({});
 
     // Value for result
@@ -37,8 +36,7 @@ const TwoWayAcceptor = () => {
             setHasUploaded(false);
             return;
         }
-
-        
+     
         const parseTextFile = (textFileToParse: string) => {
 
             var linesInText: string[] = textFileToParse.split("\n");
@@ -102,14 +100,14 @@ const TwoWayAcceptor = () => {
                 let stateName =  programMatchedPattern[1].trim();
                 let statesInput = programMatchedPattern[2].trim();
     
-                if (statesInput === 'HELL' || statesInput === 'ACCEPT') {
+                if (statesInput === 'REJECT' || statesInput === 'HELL' || statesInput === 'ACCEPT') {
                     statesToBeCreated[stateName] = statesInput;
                 } else {
                     let stateDirection: string = programMatchedPattern[3];
                     let stateTransitions: string[] = programMatchedPattern[4].split(/[()]+/)
-                                            .filter(e => e !== " " && e !== "\r");
+                                            .filter(e => e.trim() !== "" && e !== " " && e !== "\r");
                     let charState: CharactersPerState = {};
-    
+
                     stateTransitions.forEach(characterPerState => {
                         let splittedCharacters: string[] = characterPerState.split(',');
                         charState[splittedCharacters[0].trim()] = {
@@ -156,12 +154,12 @@ const TwoWayAcceptor = () => {
             });
     
             setInitialStatesList(tempInitialStatesList);
-            setFinalStatesList(tempFinalStatesList);
             setParsedStates(statesToBeCreated);
     
         }
    
         setHasUploaded(true);
+        setExecuteResult("__________");
         parseTextFile(textFile);
 
     }, [textFile])
@@ -200,22 +198,35 @@ const TwoWayAcceptor = () => {
         // console.log(xScannedString);
         // console.log('Current state');
         // console.log(currentState);
-        console.log('Parsed states:');
-        console.log(parsedStates);
+        // console.log('Parsed states:');
+        // console.log(parsedStates);
         // console.log('Current parsed state:');
         // console.log(parsedStates[currentState]);
 
-        let currentParsedState = parsedStates[currentState];
+        let currentParsedState: CharactersPerState | string = parsedStates[currentState];
         let rejectionKeywords:string[] = ["HELL", "REJECT"]
 
         while (!rejectionKeywords.includes(currentParsedState as string)) {
-
+    
+            // Get the current character scanned by the tape head
             let characterToBeScanned = xScannedString[stringIndex];
-            currentParsedState = parsedStates[currentState];
-            console.log('Current parsed state');
-            console.log(currentParsedState);
 
-            console.log(rejectionKeywords.includes(currentParsedState as string))
+            // Get the possible transition states for the current state
+            let stateTransitions: CharactersPerState = currentParsedState as CharactersPerState;
+            let currentTransition: any = stateTransitions[characterToBeScanned];    
+            currentParsedState = parsedStates[currentTransition.transitionState];
+            currentTransition = (currentParsedState as CharactersPerState)[characterToBeScanned];
+
+            // console.log(`Char: ${characterToBeScanned}`);
+            // console.log(`State Transition:`);
+            // console.log(stateTransitions);
+            // console.log(`***********************`)
+            // console.log(`Current Transition`)
+            // console.log(currentTransition);
+            // console.log(`^^^^^^^^^^^^^^^^^^^^^^^`);
+            // console.log(`Current Parsed State`)
+            // console.log(currentParsedState);
+            // console.log(`=======================`);
 
             // If accepting or final state, stop the loop
             if (currentParsedState === "ACCEPT") {
@@ -227,20 +238,9 @@ const TwoWayAcceptor = () => {
                 break;
             }
 
-            // Proceed to changing states
-            let stateTransitions: CharactersPerState = currentParsedState as CharactersPerState;
-
-            // console.log('Current state');
-            // console.log(currentState);
-            // console.log(stateTransitions[characterToBeScanned]);
-            // console.log('================================');
-
-            let currentTransition: any = stateTransitions[characterToBeScanned];
-            currentState = currentTransition.transitionState;       
-
             if (currentTransition.transitionDirection === 'right') {
                 stringIndex++;
-            } else {
+            } else  {
                 stringIndex--;
             }
 

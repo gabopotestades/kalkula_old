@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { isNullOrUndefined } from './GeneralHelpers';
 
 const FileUploader = ({ parentCallback }: any) => {
 
@@ -11,10 +12,13 @@ const FileUploader = ({ parentCallback }: any) => {
 
     const handleChange = (event: any) => {
         const fileReader = new FileReader();
-        fileReader.readAsText(event.target.files[0]);
         fileReader.onloadend = () => {
-            parentCallback(fileReader.result);
+            if (!isNullOrUndefined(fileReader.result))
+                parentCallback(fileReader.result);
         }
+        
+        if (!isNullOrUndefined(event.target.files[0]))
+            fileReader.readAsText(event.target.files[0]);
     };
 
     return ( 

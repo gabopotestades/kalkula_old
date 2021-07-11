@@ -1,12 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@300&display=swap");
+@import url("https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css");
 
 * {
-  background-color: #1d1f21;
-  font-family: "Oxygen";
   margin: 0;
 }
 
 body {
+  background-color: #1d1f21;
+  font-family: "Oxygen";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -17,7 +18,7 @@ code {
 }
 
 .default-btn {
-  background-color: #838383;
+  background-color: #636363;
   border: none;
   color: white;
   padding: 0.5rem 1rem;
@@ -25,5 +26,12 @@ code {
   text-decoration: none;
   display: inline-block;
   margin: 4px 2px;
+  max-width: 5rem;
+  max-height: 2rem;
+  font-family: "Oxygen";
   border-radius: 4px;
+  &:hover {
+    background-color: #9c9c9c;
+    cursor: pointer;
+  }
 }

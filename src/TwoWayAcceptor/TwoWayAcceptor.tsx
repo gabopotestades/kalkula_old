@@ -297,7 +297,9 @@ const TwoWayAcceptor = () => {
                     <tbody>
                         <tr>
                             <td className="symbol">X</td>
-                            <td className="description">{ xValues }</td>
+                            <td className="description">
+                                <input id="xInput" type="text" value = { xValues } onChange={(e) => setxValues(e.target.value)}/>
+                            </td>
                         </tr>
                         <tr>
                             <td className="symbol">Q</td>

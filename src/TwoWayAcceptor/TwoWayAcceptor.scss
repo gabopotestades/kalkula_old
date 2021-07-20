@@ -141,6 +141,15 @@
 .twa-tuple-table tbody tr:last-of-type {
   border-bottom: none;
 }
+
+#xInput {
+  background-color: #353535;
+  color: #ffffff;
+  box-shadow: none;
+  min-width: 10rem;
+  font-family: "Oxygen";
+}
+
 /*#endregion Center table*/
 
 .twa-program {

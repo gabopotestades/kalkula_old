@@ -1,10 +1,10 @@
 import './TwoWayAcceptor.scss'
-import FileUploader from "../Utilities/FileUploader";
-import { useState, useEffect } from "react";
+import FileUploader from '../Utilities/FileUploader';
+import { useState, useEffect } from 'react';
 import { States, StatesDirection } from '../Interfaces/States';
 import { removeSpacesAndConcat } from '../Utilities/StringHelpers';
 import { CharactersPerState } from '../Interfaces/CharactersPerState';
-import { isNullOrUndefined, isEmptyObject } from "../Utilities/GeneralHelpers";
+import { isNullOrUndefined, isEmptyObject } from '../Utilities/GeneralHelpers';
 
 const TwoWayAcceptor = () => {
 

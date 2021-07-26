@@ -47,7 +47,7 @@ const TuringMachine = () => {
             const oneParameterPattern: RegExp = /^\s*(const|shl|shr|copy)\s*-\s*(\d+)\s*$/;
             const twoParameterPattern: RegExp = /^\s*(move)\s*-\s*(d+)\s*-\s*(d+)\s*$/;
             const parenParameterPattern: RegExp = /^\s*(ife|ifne|ifg|ifge|ifl|ifle|goto)\s*\(\s*(d+)\s*\)\s*$/;
-            const operationPattern: RegExp= /^\s*(add|mult|monus|div)\s*$/;
+            const operationPattern: RegExp= /^\s*(add|mult|monus|div|halt)\s*$/;
 
             // Parse each line 
             var modulesToBeCreated: Modules= {};

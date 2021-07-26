@@ -25,6 +25,7 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   margin-bottom: 1.5rem;
   height: 25.4rem;
+  max-height: 25.4rem;
 }
 
 .tm-modules-table thead tr {
@@ -44,12 +45,36 @@
   border-bottom: 2px solid #dddddd;
 }
 
-.tm-modules-table th,
-.tm-modules-table td {
+.tm-modules-table th {
   padding: 12px 15px;
 }
 
-.tm-modules-table tbody tr {
+.tm-modules-table tr {
+  padding: 0;
+}
+
+.omega-tr {
+  line-height: 3rem;
+  height: 3rem;
+  border-bottom: 1px solid #dddddd;
+}
+
+#omegaLabel {
+  font-size: 1.5rem;
+}
+
+#omegaInput {
+  background-color: #353535;
+  color: #ffffff;
+  box-shadow: none;
+  width: 15rem;
+  line-height: 1.5rem;
+  margin-left: 0.5rem;
+  font-family: "Oxygen";
+  font-size: 1rem;
+}
+
+.modules-tr {
   border-bottom: 1px solid #dddddd;
   text-align: left;
   white-space: pre;
@@ -190,6 +215,7 @@ input[type="text"]:focus {
   line-height: 2rem;
   margin-left: 0.5rem;
   font-family: "Oxygen";
+  font-size: 1rem;
 }
 
 #outputLabel {
@@ -206,6 +232,7 @@ input[type="text"]:focus {
   line-height: 2rem;
   margin-left: 0.5rem;
   font-family: "Oxygen";
+  font-size: 1rem;
 }
 
 /*#endregion Right table*/

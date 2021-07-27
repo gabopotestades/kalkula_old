@@ -1,6 +1,6 @@
 import { CharactersPerState } from "./CharactersPerState";
 
-export interface States {
+export interface TwoWayAcceptorStates {
     [key: string]: (CharactersPerState | string);
 }
 

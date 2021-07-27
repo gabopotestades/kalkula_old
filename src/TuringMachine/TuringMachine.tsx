@@ -80,7 +80,7 @@ const TuringMachine = () => {
                     modulesToBeCreated[parsedModule![1].trim()] = {
                         command: parsedCommand,
                         type: tempType,
-                        firstParameter: +parsedModule![3].trim()
+                        firstParameter: parsedModule![3].trim()
                     };
 
 
@@ -90,8 +90,8 @@ const TuringMachine = () => {
                     modulesToBeCreated[parsedModule![1].trim()] = {
                         command: parsedModule![2].trim(),
                         type: 'move',
-                        firstParameter: +parsedModule![3].trim(),
-                        secondParameter: +parsedModule![4].trim(),
+                        firstParameter: parsedModule![3].trim(),
+                        secondParameter: parsedModule![4].trim(),
                     }
 
                 } else if (comparisonParameterPattern.test(module)) {
@@ -100,7 +100,7 @@ const TuringMachine = () => {
                     modulesToBeCreated[parsedModule![1].trim()] = {
                         command: parsedModule![2].trim(),
                         type: 'comparison',
-                        firstParameter: +parsedModule![3].trim()
+                        firstParameter: parsedModule![3].trim()
                     };
 
                 } else if (operationPattern.test(module)) {
@@ -152,43 +152,42 @@ const TuringMachine = () => {
 
         // Setup initial configuration before execution
         var omegaIndex: number = 0;
+        var moduleIndex: number = 0;
         var omegaInput: string = omegaValue;
         var modulesKeys: string[] = Object.keys(moduleValues);
-        var currentState: string = modulesKeys[2];
         var currentCommand: string = '';
 
         while (currentCommand !== 'halt') {
 
-            var currentModule = moduleValues[currentState];
-            var currentType: string = currentModule.type;
+            let currentState: string = modulesKeys[moduleIndex];
+            let currentModule = moduleValues[currentState];
+            let currentType: string = currentModule.type;
             currentCommand = currentModule.command;
 
             if (currentCommand === 'goto') {
-                currentState = String(currentModule.firstParameter);
+                moduleIndex = modulesKeys.indexOf(currentModule.firstParameter!)
             } else if (currentCommand !== 'halt') {
 
                 if (currentType === 'shift') {
 
-                    omegaIndex = shiftModule(omegaInput, omegaIndex, currentCommand, currentModule.firstParameter!);
+                    omegaIndex = shiftModule(omegaInput, omegaIndex, currentCommand, +currentModule.firstParameter!);
 
                 } else if (currentType === 'constant') {
 
-                    let result: [string, number] = constantModule(omegaInput, omegaIndex, currentModule.firstParameter!);
+                    let result: [string, number] = constantModule(omegaInput, omegaIndex, +currentModule.firstParameter!);
                     omegaInput = result[0];
                     omegaIndex = result[1];
-                    console.log('test')
-                    console.log(result);
                     break;
 
                 } else if (currentType === 'copy') {
 
-                    let result: [string, number] = copyModule(omegaInput, omegaIndex, currentModule.firstParameter!);
+                    let result: [string, number] = copyModule(omegaInput, omegaIndex, +currentModule.firstParameter!);
                     omegaInput = result[0];
                     omegaIndex = result[1];
                     
                 } else if (currentType === 'move') {
 
-                    let result: [string, number] = moveModule(omegaInput, omegaIndex, currentModule.firstParameter!, currentModule.secondParameter!);
+                    let result: [string, number] = moveModule(omegaInput, omegaIndex, +currentModule.firstParameter!, +currentModule.secondParameter!);
                     omegaInput = result[0];
                     omegaIndex = result[1];
                     
@@ -197,6 +196,10 @@ const TuringMachine = () => {
                     let result: [string, number] = comparisonModule(omegaInput, omegaIndex, currentCommand);
                     omegaInput = result[0];
 
+                    if (result[1] === 1) {
+                        moduleIndex = modulesKeys.indexOf(currentModule.firstParameter!)
+                    }
+
                 } else if (currentType === 'operation') {
 
                     omegaInput = operationModule(omegaInput, omegaIndex, currentCommand);
@@ -204,6 +207,8 @@ const TuringMachine = () => {
                 } 
 
             }
+
+            moduleIndex++;
 
         }
 
@@ -255,7 +260,23 @@ const TuringMachine = () => {
                 <table className="tm-logs-table">
                     <thead>
                         <tr>
-                            <th className="title" colSpan={2}>Execution Log</th>
+                            <th className="title" colSpan={3}>Execution Log</th>
+                        </tr>
+                        <tr className="tm-logs-headers">
+                            <td> 
+                                <div className="command">
+                                </div>
+                            </td>
+                            <td>
+                                <div className="tape-head">
+                                τ
+                                </div>
+                            </td>
+                            <td>
+                                <div className="omega">
+                                ω
+                                </div>
+                            </td>
                         </tr>
                     </thead>
                     <tbody className="tm-logs-tbody">
@@ -268,12 +289,12 @@ const TuringMachine = () => {
                 <div className="tm-logs-output">
 
                     <div className="tm-logs-output-tapehead">
-                        <label id="tapeLabel"> Tape Head </label>
+                        <label id="tapeLabel"> τ </label>
                         <label>:</label>
                         <input readOnly id="tapeInput" type="text" value = {tapeIndexValue} onChange={(e) => setTapeIndexValue(e.target.value)}/>
                     </div>
                     <div className="tm-logs-output-result">
-                        <label id="outputLabel"> Output String </label>
+                        <label id="outputLabel"> ω </label>
                         <label>:</label>
                         <input readOnly  id="outputInput" type="text" value = {outputValue} onChange={(e) => setOutputValue(e.target.value)}/>
                     </div>

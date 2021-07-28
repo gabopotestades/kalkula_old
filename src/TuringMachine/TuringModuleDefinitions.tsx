@@ -6,9 +6,10 @@ import { TuringStates } from "../Interfaces/TuringStates";
     * *This definitions are pre-defined Turing Machines that 
     * *are use to manipulate the input string and tape head index
 */
-export function shiftModule(currentOmega: string, currentIndex: number, command: string, shiftValue: number): number {
+export function shiftModule(currentOmega: string, currentIndex: number, command: string, shiftValue: number): [string, number] {
 
     let newOmegaIndex: number = currentIndex;
+    let currentOmegaString: string = currentOmega;
     let turingStateTransitions: TuringCharactersPerStates = {};
     let statesDirection: StatesDirection = {};
     let turingStates: TuringStates = {}
@@ -53,7 +54,13 @@ export function shiftModule(currentOmega: string, currentIndex: number, command:
                 newOmegaIndex--;
             }
 
-            characterToBeScanned = currentOmega[newOmegaIndex];
+            // If the index is at the edge of the string, add a sharp
+            if (newOmegaIndex >= currentOmegaString.length - 1) {
+                currentOmegaString = currentOmegaString.concat("#").replace(/\r?\n|\r/g, '');
+            }
+
+            characterToBeScanned = currentOmegaString[newOmegaIndex];
+
             currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
             currentStateInstructions = turingStates[currentState];
 
@@ -62,7 +69,7 @@ export function shiftModule(currentOmega: string, currentIndex: number, command:
     
      }
 
-    return newOmegaIndex;
+    return [currentOmegaString, newOmegaIndex];
 }
 
 export function constantModule(currentOmega: string, currentIndex: number, constantNumber: number): [string, number] {

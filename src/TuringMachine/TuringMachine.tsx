@@ -63,9 +63,11 @@ const TuringMachine = () => {
             
             tempModulesValues.every(module => {
 
-                if (oneParameterPattern.test(module)) {
+                let trimmedModule: string = module.replace(/\r?\n|\r/g, '');
 
-                    let parsedModule = module.match(oneParameterPattern);
+                if (oneParameterPattern.test(trimmedModule)) {
+                    
+                    let parsedModule = trimmedModule.match(oneParameterPattern);
                     let parsedCommand: string = parsedModule![2].trim();
                     let tempType: string = ''
                     
@@ -84,9 +86,9 @@ const TuringMachine = () => {
                     };
 
 
-                 } else if (twoParameterPattern.test(module)) {
+                 } else if (twoParameterPattern.test(trimmedModule)) {
 
-                    let parsedModule = module.match(twoParameterPattern);
+                    let parsedModule = trimmedModule.match(twoParameterPattern);
                     modulesToBeCreated[parsedModule![1].trim()] = {
                         command: parsedModule![2].trim(),
                         type: 'move',
@@ -94,18 +96,18 @@ const TuringMachine = () => {
                         secondParameter: parsedModule![4].trim(),
                     }
 
-                } else if (comparisonParameterPattern.test(module)) {
+                } else if (comparisonParameterPattern.test(trimmedModule)) {
 
-                    let parsedModule = module.match(comparisonParameterPattern);         
+                    let parsedModule = trimmedModule.match(comparisonParameterPattern);         
                     modulesToBeCreated[parsedModule![1].trim()] = {
                         command: parsedModule![2].trim(),
                         type: 'comparison',
                         firstParameter: parsedModule![3].trim()
                     };
 
-                } else if (operationPattern.test(module)) {
+                } else if (operationPattern.test(trimmedModule)) {
 
-                    let parsedModule = module.match(operationPattern);
+                    let parsedModule = trimmedModule.match(operationPattern);
                     modulesToBeCreated[parsedModule![1].trim()] = {
                         command: parsedModule![2].trim(),
                         type: 'operation'
@@ -170,14 +172,15 @@ const TuringMachine = () => {
 
                 if (currentType === 'shift') {
 
-                    omegaIndex = shiftModule(omegaInput, omegaIndex, currentCommand, +currentModule.firstParameter!);
+                    let result: [string, number] = shiftModule(omegaInput, omegaIndex, currentCommand, +currentModule.firstParameter!);
+                    omegaInput = result[0];
+                    omegaIndex = result[1];
 
                 } else if (currentType === 'constant') {
 
                     let result: [string, number] = constantModule(omegaInput, omegaIndex, +currentModule.firstParameter!);
                     omegaInput = result[0];
                     omegaIndex = result[1];
-                    break;
 
                 } else if (currentType === 'copy') {
 

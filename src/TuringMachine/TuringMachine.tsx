@@ -164,10 +164,12 @@ const TuringMachine = () => {
             let currentState: string = modulesKeys[moduleIndex];
             let currentModule = moduleValues[currentState];
             let currentType: string = currentModule.type;
+            let willJump: boolean = false;
             currentCommand = currentModule.command;
 
             if (currentCommand === 'goto') {
                 moduleIndex = modulesKeys.indexOf(currentModule.firstParameter!)
+                willJump = true;
             } else if (currentCommand !== 'halt') {
 
                 if (currentType === 'shift') {
@@ -201,6 +203,7 @@ const TuringMachine = () => {
 
                     if (result[1] === 1) {
                         moduleIndex = modulesKeys.indexOf(currentModule.firstParameter!)
+                        willJump = true;
                     }
 
                 } else if (currentType === 'operation') {
@@ -210,8 +213,10 @@ const TuringMachine = () => {
                 } 
 
             }
-
-            moduleIndex++;
+            
+            if (!willJump) {
+                moduleIndex++;
+            }
 
         }
 

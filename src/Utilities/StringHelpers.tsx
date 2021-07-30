@@ -9,3 +9,23 @@ export function replaceAt (stringToManipulate: string, index: number, charToBeRe
     return a.join("")
 
 }
+
+export function trimTrailingChars(stringToEdit: string, charToTrim: string): string {
+    var regExp = new RegExp(charToTrim + "+$");
+    var result = stringToEdit.replace(regExp, "");
+  
+    return result;
+}
+
+export function addCharacterToTheEnd(stringToEdit:string, charToAdd: string): string {
+
+    var stringToReturn: string = stringToEdit;
+
+    // Add character to the edge of the string if not the character
+    if (stringToReturn[stringToReturn.length - 1] !== charToAdd) {
+        stringToReturn = stringToEdit.concat(charToAdd).replace(/\r?\n|\r/g, '');
+    }
+
+    return stringToReturn;
+
+}

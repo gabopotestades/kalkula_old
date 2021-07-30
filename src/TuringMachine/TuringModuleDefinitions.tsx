@@ -2,7 +2,7 @@ import { StatesDirection } from "../Interfaces/AcceptorStates";
 import { TuringCharactersPerStates } from "../Interfaces/TuringCharactersPerState";
 import { TuringStates } from "../Interfaces/TuringStates";
 import { isNullOrUndefined } from "../Utilities/GeneralHelpers";
-import { replaceAt } from "../Utilities/StringHelpers";
+import { addCharacterToTheEnd, replaceAt, trimTrailingChars } from "../Utilities/StringHelpers";
 
 /*
     * *This definitions are pre-defined Turing Machines that 
@@ -69,6 +69,9 @@ export function shiftModule(currentOmega: string, currentIndex: number, command:
         }
 
      }
+
+    currentOmegaString = trimTrailingChars(currentOmegaString, "#");
+    currentOmegaString = addCharacterToTheEnd(currentOmegaString, "#");
 
     return [currentOmegaString, newOmegaIndex];
 
@@ -156,10 +159,8 @@ export function constantModule(currentOmega: string, currentIndex: number, const
 
     }
 
-    // Add sharp to the edge of the string if not a sharp
-    if (currentOmegaString[currentOmegaString.length - 1] !== "#") {
-        currentOmegaString = currentOmegaString.concat("#").replace(/\r?\n|\r/g, '');
-    }
+    currentOmegaString = trimTrailingChars(currentOmegaString, "#");
+    currentOmegaString = addCharacterToTheEnd(currentOmegaString, "#");
 
     return [currentOmegaString, newOmegaIndex];
 
@@ -174,23 +175,28 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
     var result: [string, number] = constantModule(currentOmegaString, newOmegaIndex, copyNumber);
     currentOmegaString = result[0];
     newOmegaIndex = result[1];
-    
+
+    // console.log(`Omega: ${currentOmegaString}`)
+    // console.log(`Index: ${newOmegaIndex}`)
+    // return [currentOmegaString, newOmegaIndex]
+
     let turingStateTransitions: TuringCharactersPerStates = {};
     let statesDirection: StatesDirection = {};
     let turingStates: TuringStates = {}
 
     // ** States
+    // 0] const- (the copy number)
     // 1] right (1 / x, 2) (x, 1) (#, 5)
     // 2] left  (1, 2) (x, 2) (a, 3)
     // 3] left  (1, 3) (# / a, 4)
     // 4] right (1, 4) (x, 1) (a, 4)
     // 5] left  (1, 5) (x / #) (a / #, 5) (#, 6)
-    // 6] right (1 / x) (#, 10)
+    // 6] right (1 / x, 7) (#, 10)
     // 7] right (1, 7) (#, 8)
-    // 8] right (a, 8) (# / a, 9)
-    // 9] left  (1, 9) (x / 1, 6) (#, 9)
+    // 8] right (1, 7) (a, 8) (# / a, 9)
+    // 9] left (1, 9) (x / 1, 6) (a, 9) (#, 9) 
     // 10] right (1, 10) (a / 1, 11) (#, 10)
-    // 11] right (a / 1, 11) (#, 12)
+    // 11] right  (a / 1, 11) (#, 12)
     // 12] ACCEPT
 
     //#region  States Direction
@@ -235,11 +241,18 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
     turingStateTransitions['a'] = {
         stateTransition: '3'
     }
+    turingStateTransitions['#'] = {
+        stateTransition: '1',
+         characterReplacement: 'a'
+    }
     turingStates['2'] = turingStateTransitions;
 
     // For State: 3
     turingStateTransitions = {}
     turingStateTransitions['1'] = {
+        stateTransition: '3'
+    }
+    turingStateTransitions['a'] = {
         stateTransition: '3'
     }
     turingStateTransitions['#'] = {
@@ -302,6 +315,9 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
 
     // For State: 8
     turingStateTransitions = {}
+    turingStateTransitions['1'] = {
+        stateTransition: '7'
+    }
     turingStateTransitions['a'] = {
         stateTransition: '8'
     }
@@ -316,26 +332,32 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
     turingStateTransitions['1'] = {
         stateTransition: '9'
     }
-    turingStateTransitions['x'] = {
-        stateTransition: '6',
-        characterReplacement: '1'
+    turingStateTransitions['a'] = {
+        stateTransition: '9'
     }
     turingStateTransitions['#'] = {
         stateTransition: '9'
+    }
+    turingStateTransitions['x'] = {
+        stateTransition: '6',
+        characterReplacement: '1'
     }
     turingStates['9'] = turingStateTransitions;
 
     // For State: 10
     turingStateTransitions = {}
+    turingStateTransitions['a'] = {
+        stateTransition: '10'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '10'
+    }
     turingStateTransitions['1'] = {
         stateTransition: '10'
     }
     turingStateTransitions['a'] = {
         stateTransition: '11',
         characterReplacement: '1'
-    }
-    turingStateTransitions['#'] = {
-        stateTransition: '10'
     }
     turingStates['10'] = turingStateTransitions;
 
@@ -350,7 +372,7 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
     }
     turingStates['11'] = turingStateTransitions;
 
-    // For State: 12
+    // For State: 14
     turingStates['12'] = 'ACCEPT';
     //#endregion States Declaration
 
@@ -375,9 +397,13 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
         characterToBeScanned = currentOmegaString[newOmegaIndex];
 
         console.log(`Current state: ${currentState}`);
+        console.log(`Current omega: ${currentOmegaString}`);
+        console.log(`Current index: ${newOmegaIndex}`);
+        console.log(`Current direction: ${statesDirection[currentState]}`);
         console.log(`Character to be scanned: ${characterToBeScanned}`);
         console.log(`Current State Instructions:`);
         console.log(currentStateInstructions);
+        console.log('=======================================')
 
         currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
         let characterToReplace = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].characterReplacement;
@@ -389,6 +415,9 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
         currentStateInstructions = turingStates[currentState];
 
     }
+
+    currentOmegaString = trimTrailingChars(currentOmegaString, "#");
+    currentOmegaString = addCharacterToTheEnd(currentOmegaString, "#");
 
     return [currentOmegaString, newOmegaIndex]
 

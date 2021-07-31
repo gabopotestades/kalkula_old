@@ -5,13 +5,69 @@ import { isNullOrUndefined } from "../Utilities/GeneralHelpers";
 import { addCharacterToTheEnd, replaceAt, trimTrailingChars } from "../Utilities/StringHelpers";
 
 /*
-    * *This definitions are pre-defined Turing Machines that 
+    * *These definitions are pre-defined Turing Machines that 
     * *are use to manipulate the input string and tape head index
 */
-export function shiftModule(currentOmega: string, currentIndex: number, command: string, shiftValue: number): [string, number] {
+
+function turingMachineExecute(currentOmega: string, currentIndex: number, initialState: string, 
+                              turingStates: TuringStates, turingStatesDirection: StatesDirection, currentModuleIndex: number ): [string, number] {
 
     let newOmegaIndex: number = currentIndex;
-    let currentOmegaString: string = currentOmega;
+    let newOmegaString: string = currentOmega;
+
+    // Setup initial state per iteration based on parameter given
+    let currentState: string = initialState;
+    let characterToBeScanned: string = currentOmega[newOmegaIndex];
+    let currentStateInstructions: (TuringCharactersPerStates | string) = turingStates[currentState];
+
+    while (currentStateInstructions !== 'ACCEPT') {
+
+       if (turingStatesDirection[currentState] === 'right') {
+           newOmegaIndex++;
+       } else {
+           newOmegaIndex--;
+       }
+
+       // If the index is at the edge of the string, add a sharp
+       if (newOmegaIndex >= newOmegaString.length - 1) {
+           newOmegaString = newOmegaString.concat("#").replace(/\r?\n|\r/g, '');
+       }
+
+       characterToBeScanned = newOmegaString[newOmegaIndex];
+
+        // For Testing
+        if (currentModuleIndex === 0 ) {
+            console.log(`Current state: ${currentState}`);
+            console.log(`Current omega: ${newOmegaString}`);
+            console.log(`Current index: ${newOmegaIndex}`);
+            console.log(`Current direction: ${turingStatesDirection[currentState]}`);
+            console.log(`Character to be scanned: ${characterToBeScanned}`);
+            console.log(`Current State Instructions:`);
+            console.log(currentStateInstructions);
+            console.log('=======================================')
+        }
+
+       currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
+       let characterToReplace = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].characterReplacement;
+
+       if (!isNullOrUndefined(characterToReplace)) {
+           newOmegaString  = replaceAt(newOmegaString, newOmegaIndex, characterToReplace!.replace(/\r?\n|\r/g, ''));
+       }
+
+       currentStateInstructions = turingStates[currentState];
+
+    }    
+    
+    newOmegaString = trimTrailingChars(newOmegaString, "#");
+    newOmegaString = addCharacterToTheEnd(newOmegaString, "#");
+    
+    return [newOmegaString, newOmegaIndex]
+}
+
+export function shiftModule(currentOmega: string, currentIndex: number, command: string, shiftValue: number, currentStateIndex: number): [string, number] {
+
+    let newOmegaIndex: number = currentIndex;
+    let newOmegaString: string = currentOmega;
     let turingStateTransitions: TuringCharactersPerStates = {};
     let statesDirection: StatesDirection = {};
     let turingStates: TuringStates = {}
@@ -42,45 +98,19 @@ export function shiftModule(currentOmega: string, currentIndex: number, command:
      turingStates['2'] = 'ACCEPT';
 
      for (let i = shiftValue; i > 0; i--) {
-
-        // Setup initial state per iteration based on parameter given
-        let currentState: string = '1';
-        let characterToBeScanned: string = currentOmega[newOmegaIndex];
-        let currentStateInstructions: (TuringCharactersPerStates | string) = turingStates[currentState];
-
-        while (currentStateInstructions !== 'ACCEPT') {
-
-            if (statesDirection[currentState] === 'right') {
-                newOmegaIndex++;
-            } else {
-                newOmegaIndex--;
-            }
-
-            // If the index is at the edge of the string, add a sharp
-            if (newOmegaIndex >= currentOmegaString.length - 1) {
-                currentOmegaString = currentOmegaString.concat("#").replace(/\r?\n|\r/g, '');
-            }
-
-            characterToBeScanned = currentOmegaString[newOmegaIndex];
-
-            currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
-            currentStateInstructions = turingStates[currentState];
-
-        }
+    
+        [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
 
      }
 
-    currentOmegaString = trimTrailingChars(currentOmegaString, "#");
-    currentOmegaString = addCharacterToTheEnd(currentOmegaString, "#");
-
-    return [currentOmegaString, newOmegaIndex];
+    return [newOmegaString, newOmegaIndex];
 
 }
 
-export function constantModule(currentOmega: string, currentIndex: number, constantNumber: number): [string, number] {
+export function constantModule(currentOmega: string, currentIndex: number, constantNumber: number, currentStateIndex: number): [string, number] {
     
     let newOmegaIndex: number = currentIndex;
-    let currentOmegaString: string = currentOmega;
+    let newOmegaString: string = currentOmega;
     let turingStateTransitions: TuringCharactersPerStates = {};
     let statesDirection: StatesDirection = {};
     let turingStates: TuringStates = {}
@@ -116,69 +146,25 @@ export function constantModule(currentOmega: string, currentIndex: number, const
      // State: 3 is the accepting state
     turingStates['3'] = 'ACCEPT';
 
-    // console.log(turingStates);
-    // return [currentOmegaString, newOmegaIndex];
-
     for (let i = constantNumber; i > 0; i--) {
-
-        // Setup initial state per iteration based on parameter given
-        let currentState: string = '1';
-        let characterToBeScanned: string = currentOmega[newOmegaIndex];
-        let currentStateInstructions: (TuringCharactersPerStates | string) = turingStates[currentState];
-
-        while (currentStateInstructions !== 'ACCEPT') {
-
-            if (statesDirection[currentState] === 'right') {
-                newOmegaIndex++;
-            } else {
-                newOmegaIndex--;
-            }
-
-            // If the index is at the edge of the string, add a sharp
-            if (newOmegaIndex >= currentOmegaString.length - 1) {
-                currentOmegaString = currentOmegaString.concat("#").replace(/\r?\n|\r/g, '');
-            }
-
-            characterToBeScanned = currentOmegaString[newOmegaIndex];
-
-            // console.log(`Current state: ${currentState}`);
-            // console.log(`Character to be scanned: ${characterToBeScanned}`);
-            // console.log(`Current State Instructions:`);
-            // console.log(currentStateInstructions);
-
-            currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
-            let characterToReplace = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].characterReplacement;
-
-            if (!isNullOrUndefined(characterToReplace)) {
-                currentOmegaString  = replaceAt(currentOmegaString, newOmegaIndex, characterToReplace!.replace(/\r?\n|\r/g, ''));
-            }
-
-            currentStateInstructions = turingStates[currentState];
-
-        }
+    
+        [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
 
     }
 
-    currentOmegaString = trimTrailingChars(currentOmegaString, "#");
-    currentOmegaString = addCharacterToTheEnd(currentOmegaString, "#");
-
-    return [currentOmegaString, newOmegaIndex];
+    return [newOmegaString, newOmegaIndex];
 
 }
 
-export function copyModule(currentOmega: string, currentIndex: number, copyNumber: number): [string, number] {
+export function copyModule(currentOmega: string, currentIndex: number, copyNumber: number, currentStateIndex: number): [string, number] {
     
     let newOmegaIndex: number = currentIndex;
-    let currentOmegaString: string = currentOmega;
+    let newOmegaString: string = currentOmega;
 
     // Perform a constant module using the copy number
-    var result: [string, number] = constantModule(currentOmegaString, newOmegaIndex, copyNumber);
-    currentOmegaString = result[0];
+    var result: [string, number] = constantModule(newOmegaString, newOmegaIndex, copyNumber, currentStateIndex);
+    newOmegaString = result[0];
     newOmegaIndex = result[1];
-
-    // console.log(`Omega: ${currentOmegaString}`)
-    // console.log(`Index: ${newOmegaIndex}`)
-    // return [currentOmegaString, newOmegaIndex]
 
     let turingStateTransitions: TuringCharactersPerStates = {};
     let statesDirection: StatesDirection = {};
@@ -199,7 +185,7 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
     // 11] right  (a / 1, 11) (#, 12)
     // 12] ACCEPT
 
-    //#region  States Direction
+    //#region States Direction
 
     statesDirection[1] = 'right';
     statesDirection[2] = 'left';
@@ -376,61 +362,453 @@ export function copyModule(currentOmega: string, currentIndex: number, copyNumbe
     turingStates['12'] = 'ACCEPT';
     //#endregion States Declaration
 
-    // Setup initial state per iteration based on parameter given
-    let currentState: string = '1';
-    let characterToBeScanned: string = currentOmega[newOmegaIndex];
-    let currentStateInstructions: (TuringCharactersPerStates | string) = turingStates[currentState];
+    [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
 
-    while (currentStateInstructions !== 'ACCEPT') {
+    return [newOmegaString, newOmegaIndex]
 
-        if (statesDirection[currentState] === 'right') {
-            newOmegaIndex++;
-        } else {
-            newOmegaIndex--;
-        }
+}
 
-        // If the index is at the edge of the string, add a sharp
-        if (newOmegaIndex >= currentOmegaString.length - 1) {
-            currentOmegaString = currentOmegaString.concat("#").replace(/\r?\n|\r/g, '');
-        }
+export function moveModule(currentOmega: string, currentIndex: number, numbersToRemove: number, numbersToMoveLeft: number, currentStateIndex: number): [string, number] {
+    
+    let newOmegaIndex: number = currentIndex;
+    let newOmegaString: string = currentOmega;
 
-        characterToBeScanned = currentOmegaString[newOmegaIndex];
+    let turingStateTransitions: TuringCharactersPerStates = {};
+    let statesDirection: StatesDirection = {};
+    let turingStates: TuringStates = {}
 
-        console.log(`Current state: ${currentState}`);
-        console.log(`Current omega: ${currentOmegaString}`);
-        console.log(`Current index: ${newOmegaIndex}`);
-        console.log(`Current direction: ${statesDirection[currentState]}`);
-        console.log(`Character to be scanned: ${characterToBeScanned}`);
-        console.log(`Current State Instructions:`);
-        console.log(currentStateInstructions);
-        console.log('=======================================')
+    //#region Convert current head to an index
+    statesDirection['1'] = 'right';
+    statesDirection['2'] = 'left';
 
-        currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
-        let characterToReplace = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].characterReplacement;
-
-        if (!isNullOrUndefined(characterToReplace)) {
-            currentOmegaString  = replaceAt(currentOmegaString, newOmegaIndex, characterToReplace!.replace(/\r?\n|\r/g, ''));
-        }
-
-        currentStateInstructions = turingStates[currentState];
-
+    // For State: 1
+    turingStateTransitions['1'] = {
+        stateTransition: '2'
     }
+    turingStateTransitions['#'] = {
+        stateTransition: '2'
+    }
+    turingStates['1'] = turingStateTransitions;
 
-    currentOmegaString = trimTrailingChars(currentOmegaString, "#");
-    currentOmegaString = addCharacterToTheEnd(currentOmegaString, "#");
+    //For State: 2
+    turingStateTransitions = {};
+    turingStateTransitions['#'] = {
+        stateTransition: '3',
+        characterReplacement: 'x'
+    }
+    turingStates['2'] = turingStateTransitions;
 
-    return [currentOmegaString, newOmegaIndex]
+    //For State: 3
+    turingStates['3'] = 'ACCEPT';
 
+    [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
+
+    //#endregion
+    
+    // Perform a shift left to go to the # where the removal will take take place
+    [newOmegaString, newOmegaIndex] = shiftModule(newOmegaString, newOmegaIndex, 'shl', numbersToRemove, currentStateIndex);
+
+    //#region Convert the target # to a y and go to x
+    turingStates = {};
+    statesDirection = {};
+
+    statesDirection['1'] = 'right';
+    statesDirection['2'] = 'left';
+    statesDirection['3'] = 'right';
+
+    // For State: 1
+    turingStateTransitions = {};
+    turingStateTransitions['1'] = {
+        stateTransition: '2'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '2'
+    }
+    turingStates['1'] = turingStateTransitions;
+
+    // For State: 2
+    turingStateTransitions = {};
+    turingStateTransitions['#'] = {
+        stateTransition: '3',
+        characterReplacement: 'y'
+    }
+    turingStates['2'] = turingStateTransitions;
+
+    // For State: 3
+    turingStateTransitions = {};
+    turingStateTransitions['1'] = {
+        stateTransition: '3'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '3'
+    }
+    turingStateTransitions['x'] = {
+        stateTransition: '4'
+    }
+    turingStates['3'] = turingStateTransitions;
+
+    turingStates['4'] = 'ACCEPT';
+
+    [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
+
+    //#endregion
+
+    // Perform a shift right to go to the # where the last value that will be moved
+    [newOmegaString, newOmegaIndex] = shiftModule(newOmegaString, newOmegaIndex, 'shr', numbersToMoveLeft, currentStateIndex);
+
+    //#region Perform the actual move module
+    turingStates = {};
+    statesDirection = {};
+
+    statesDirection['1'] = 'right';
+    statesDirection['2'] = 'left';
+    statesDirection['3'] = 'left';
+    statesDirection['4'] = 'left';
+    statesDirection['5'] = 'right';
+    statesDirection['6'] = 'left';
+    statesDirection['7'] = 'right';
+    statesDirection['8'] = 'left';
+    statesDirection['9'] = 'right';
+    statesDirection['10'] = 'left';
+
+    // For State: 1
+    turingStateTransitions = {};
+    turingStateTransitions['1'] = {
+        stateTransition: '2'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '2'
+    }
+    turingStates['1'] = turingStateTransitions;
+
+    // For State: 2
+    turingStateTransitions = {};
+    turingStateTransitions['#'] = {
+        stateTransition: '3',
+        characterReplacement: 'z'
+    }
+    turingStateTransitions['x'] = {
+        stateTransition: '4',
+        characterReplacement: 'z'
+    }
+    turingStates['2'] = turingStateTransitions;
+
+    // For State: 3
+    turingStateTransitions = {};
+    turingStateTransitions['1'] = {
+        stateTransition: '3'
+    }
+    turingStateTransitions['x'] = {
+        stateTransition: '4',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '3',
+        characterReplacement: 'b'
+    }
+    turingStates['3'] = turingStateTransitions;
+
+    // For State: 4
+    turingStateTransitions = {};
+    turingStateTransitions['1'] = {
+        stateTransition: '4',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['y'] = {
+        stateTransition: '5'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '4'
+    }
+    turingStates['4'] = turingStateTransitions;
+
+    // For State: 5
+    turingStateTransitions = {};
+    turingStateTransitions['1'] = {
+        stateTransition: '6',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['z'] = {
+        stateTransition: '10',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['b'] = {
+        stateTransition: '8',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '5'
+    }
+    turingStates['5'] = turingStateTransitions;
+
+    // For State: 6
+    turingStateTransitions = {};
+    turingStateTransitions['y'] = {
+        stateTransition: '7'
+    }
+    turingStateTransitions['a'] = {
+        stateTransition: '7'
+    }
+    turingStateTransitions['b'] = {
+        stateTransition: '7'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '6'
+    }
+    turingStates['6'] = turingStateTransitions;
+
+    // For State: 7
+    turingStateTransitions = {};
+    turingStateTransitions['#'] = {
+        stateTransition: '5',
+        characterReplacement: 'a'
+    }
+    turingStates['7'] = turingStateTransitions;
+
+    // For State: 8
+    turingStateTransitions = {};
+    turingStateTransitions['y'] = {
+        stateTransition: '9'
+    }
+    turingStateTransitions['a'] = {
+        stateTransition: '9'
+    }
+    turingStateTransitions['b'] = {
+        stateTransition: '9'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '8'
+    }
+    turingStates['8'] = turingStateTransitions;
+
+    // For State: 9
+    turingStateTransitions = {};
+    turingStateTransitions['#'] = {
+        stateTransition: '5',
+        characterReplacement: 'b'
+    }
+    turingStates['9'] = turingStateTransitions;
+
+    // For State: 10
+    turingStateTransitions = {};
+    turingStateTransitions['a'] = {
+        stateTransition: '10',
+        characterReplacement: '1'
+    }
+    turingStateTransitions['b'] = {
+        stateTransition: '10',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['y'] = {
+        stateTransition: '11',
+        characterReplacement: '#'
+    }
+    turingStateTransitions['#'] = {
+        stateTransition: '10'
+    }
+    turingStates['10'] = turingStateTransitions;
+
+    turingStates['11'] = 'ACCEPT';
+    
+    [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
+
+    //#endregion
+
+    return [newOmegaString, newOmegaIndex]
 }
 
-export function moveModule(currentOmega: string, currentIndex: number, numbersToRemove: number, numbersToMoveLeft: number,): [string, number] {
-    return ['1', 2];
-}
-
-export function comparisonModule(currentOmega: string, currentIndex: number, command: string): [string, number] {
+export function comparisonModule(currentOmega: string, currentIndex: number, command: string, currentStateIndex: number): [string, number] {
     return ['1', 1];
 }
 
-export function operationModule(currentOmega: string, currentIndex: number, command: string): string {
-    return '';
+export function operationModule(currentOmega: string, currentIndex: number, command: string, currentStateIndex: number): [string, number] {
+    
+    let newOmegaIndex: number = currentIndex;
+    let newOmegaString: string = currentOmega;
+
+    let turingStateTransitions: TuringCharactersPerStates = {};
+    let statesDirection: StatesDirection = {};
+    let turingStates: TuringStates = {}
+
+    if (command === 'swap') {
+
+        statesDirection['1'] = 'right';
+        statesDirection['2'] = 'right';
+        statesDirection['3'] = 'right';
+        statesDirection['4'] = 'left';
+        statesDirection['5'] = 'left';
+        statesDirection['6'] = 'left';
+        statesDirection['7'] = 'left';
+        statesDirection['8'] = 'left';
+        statesDirection['9'] = 'right';
+        statesDirection['10'] = 'right';
+        statesDirection['11'] = 'left';
+        statesDirection['12'] = 'right';
+        statesDirection['13'] = 'left';
+        statesDirection['14'] = 'left';
+    
+        // For State: 1
+        turingStateTransitions['1'] = {
+            stateTransition: '2',
+            characterReplacement: 'a'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '9'
+        }
+        turingStates['1'] = turingStateTransitions;
+
+        // For State: 2
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '2'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '3'
+        }
+        turingStates['2'] = turingStateTransitions;
+
+        // For State: 3
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '4',
+            characterReplacement: 'a'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '3'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '6'
+        }
+        turingStates['3'] = turingStateTransitions;
+
+        // For State: 4
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '4'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '4'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '5'
+        }
+        turingStates['4'] = turingStateTransitions;
+
+        // For State: 5
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '5'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '1',
+            characterReplacement: '1'
+        }
+        turingStates['5'] = turingStateTransitions;
+
+        // For State: 6
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '6'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '6',
+            characterReplacement: '1'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '7',
+            characterReplacement: '1'
+        }
+        turingStates['6'] = turingStateTransitions;
+
+        // For State: 7
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '7'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '8',
+            characterReplacement: '#'
+        }
+        turingStates['7'] = turingStateTransitions;
+
+        // For State: 8
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '8'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '15'
+        }
+        turingStates['8'] = turingStateTransitions;
+
+        // For State: 9
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '9'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '10',
+            characterReplacement: '1'
+        }
+        turingStates['9'] = turingStateTransitions;
+
+        // For State: 10
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '11'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '10',
+            characterReplacement: '1'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '13'
+        }
+        turingStates['10'] = turingStateTransitions;
+
+        // For State: 11 
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '11'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '12',
+            characterReplacement: '1'
+        }
+        turingStates['11'] = turingStateTransitions;
+
+        // For State: 12
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '8',
+            characterReplacement: '#'
+        }
+        turingStates['12'] = turingStateTransitions;
+
+        // For State: 
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '13'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '14'
+        }
+        turingStates['13'] = turingStateTransitions;
+
+        // For State: 14
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '14'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '15'
+        }
+        turingStates['14'] = turingStateTransitions;
+        
+        turingStates['15'] = 'ACCEPT';
+    }
+    
+    [newOmegaString, newOmegaIndex] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);
+ 
+    return [newOmegaString, newOmegaIndex];
 }

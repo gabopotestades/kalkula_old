@@ -4,6 +4,7 @@ import FileUploader from '../Utilities/FileUploader';
 import { isEmptyObject, isNullOrUndefined } from "../Utilities/GeneralHelpers";
 import { Modules } from '../Interfaces/Modules';
 import { comparisonModule, constantModule, copyModule, moveModule, operationModule, shiftModule } from './TuringModuleDefinitions';
+import { addCharacterToTheEnd, trimTrailingChars } from '../Utilities/StringHelpers';
 
 const TuringMachine = () => {
 
@@ -29,6 +30,8 @@ const TuringMachine = () => {
         if (isNullOrUndefined(textFile)){
             setHasUploaded(false);
             return;
+        } else if (textFile === 'empty') {
+            return;
         }
 
         const parseTextFile = (textFileToParse: string) => {
@@ -39,9 +42,6 @@ const TuringMachine = () => {
                 alert("Text file has no modules.");
                 return;
             }
-        
-            // Display text to left table
-            setModuleToDisplayValues(linesInText.slice(1).join("\n"));
 
             // Reset right table
             setTapeIndexValue('');
@@ -52,8 +52,6 @@ const TuringMachine = () => {
             const twoParameterPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\s*\]\s*(move)\s*-\s*(\d+)\s*-\s*(\d+)\s*$/;
             const comparisonParameterPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\s*\]\s*(ife|ifne|ifg|ifge|ifl|ifle|goto)\s*\(\s*(\d+)\s*\)\s*$/;
             const operationPattern: RegExp= /^\s*([a-zA-Z0-9_]+)\s*\]\s*(add|mult|monus|div|swap|halt)\s*$/;
-
-            setOmegaValue(linesInText[0]);
 
             // Parse each line 
             var modulesToBeCreated: Modules= {};
@@ -115,7 +113,6 @@ const TuringMachine = () => {
                 
                 } else {
                     alert(`Incorrect syntax for line ${lineNumber}.`);
-                    setModuleValues({});
                     passed = false;
                     return false;
                 }
@@ -125,19 +122,29 @@ const TuringMachine = () => {
             });
 
             if (!passed) { 
+                setModuleToDisplayValues("");
+                setOmegaValue("");
+                setHasUploaded(false);
+                setModuleValues({});
                 return; 
             }
 
+            // Display text to left table
+            setModuleToDisplayValues(linesInText.slice(1).join("\n"));
+            setOmegaValue(linesInText[0]);
+
+            setHasUploaded(true);
             setModuleValues(modulesToBeCreated);
         }
 
-        setHasUploaded(true);
         parseTextFile(textFile);
 
     }, [textFile])
 
     const textFileCallback = (textFileUploaded: string) => {
         setUploadedTextFile(textFileUploaded);
+        // Set to empty to clear the variable for file uploaded
+        setUploadedTextFile('empty');
     }
 
     const executeProgram = (event: any) => {
@@ -174,31 +181,23 @@ const TuringMachine = () => {
 
                 if (currentType === 'shift') {
 
-                    let result: [string, number] = shiftModule(omegaInput, omegaIndex, currentCommand, +currentModule.firstParameter!);
-                    omegaInput = result[0];
-                    omegaIndex = result[1];
+                    [omegaInput, omegaIndex] = shiftModule(omegaInput, omegaIndex, currentCommand, +currentModule.firstParameter!, moduleIndex);
 
                 } else if (currentType === 'constant') {
 
-                    let result: [string, number] = constantModule(omegaInput, omegaIndex, +currentModule.firstParameter!);
-                    omegaInput = result[0];
-                    omegaIndex = result[1];
+                    [omegaInput, omegaIndex] = constantModule(omegaInput, omegaIndex, +currentModule.firstParameter!, moduleIndex);
 
                 } else if (currentType === 'copy') {
 
-                    let result: [string, number] = copyModule(omegaInput, omegaIndex, +currentModule.firstParameter!);
-                    omegaInput = result[0];
-                    omegaIndex = result[1];
+                    [omegaInput, omegaIndex] = copyModule(omegaInput, omegaIndex, +currentModule.firstParameter!, moduleIndex);
                     
                 } else if (currentType === 'move') {
 
-                    let result: [string, number] = moveModule(omegaInput, omegaIndex, +currentModule.firstParameter!, +currentModule.secondParameter!);
-                    omegaInput = result[0];
-                    omegaIndex = result[1];
-                    
+                    [omegaInput, omegaIndex] = moveModule(omegaInput, omegaIndex, +currentModule.firstParameter!, +currentModule.secondParameter!, moduleIndex);
+
                 } else if (currentType === 'comparison') {
                     
-                    let result: [string, number] = comparisonModule(omegaInput, omegaIndex, currentCommand);
+                    let result: [string, number] = comparisonModule(omegaInput, omegaIndex, currentCommand, moduleIndex);
                     omegaInput = result[0];
 
                     if (result[1] === 1) {
@@ -208,7 +207,7 @@ const TuringMachine = () => {
 
                 } else if (currentType === 'operation') {
 
-                    omegaInput = operationModule(omegaInput, omegaIndex, currentCommand);
+                    [omegaInput, omegaIndex] = operationModule(omegaInput, omegaIndex, currentCommand, moduleIndex);
 
                 } 
 
@@ -221,6 +220,8 @@ const TuringMachine = () => {
         }
 
         setTapeIndexValue(String(omegaIndex));
+        omegaInput = trimTrailingChars(omegaInput, "#");
+        omegaInput = addCharacterToTheEnd(omegaInput, "#");
         setOutputValue(omegaInput);
 
     }

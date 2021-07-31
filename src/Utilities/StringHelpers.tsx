@@ -22,7 +22,8 @@ export function addCharacterToTheEnd(stringToEdit:string, charToAdd: string): st
     var stringToReturn: string = stringToEdit;
 
     // Add character to the edge of the string if not the character
-    if (stringToReturn[stringToReturn.length - 1] !== charToAdd) {
+    if (stringToReturn[stringToReturn.length - 1] !== charToAdd || 
+        (stringToReturn[stringToReturn.length - 1] === charToAdd && stringToReturn.length === 1)) {
         stringToReturn = stringToEdit.concat(charToAdd).replace(/\r?\n|\r/g, '');
     }
 

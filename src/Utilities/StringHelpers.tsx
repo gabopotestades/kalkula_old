@@ -1,3 +1,5 @@
+import { isNullOrUndefined } from "./GeneralHelpers";
+
 export function removeSpacesAndConcat (firstString: string, secondString: string): string {
     return firstString.trim().replace(/\s/g, "") + secondString.trim().replace(/\s/g, "")
 }
@@ -22,11 +24,13 @@ export function addCharacterToTheEnd(stringToEdit:string, charToAdd: string): st
     var stringToReturn: string = stringToEdit;
 
     // Add character to the edge of the string if not the character
-    if (stringToReturn[stringToReturn.length - 1] !== charToAdd || 
+    if (isNullOrUndefined(stringToReturn)) {
+        stringToReturn = stringToEdit.concat(charToAdd + charToAdd).replace(/\r?\n|\r/g, '');
+    } else if (stringToReturn[stringToReturn.length - 1] !== charToAdd || 
         (stringToReturn[stringToReturn.length - 1] === charToAdd && stringToReturn.length === 1)) {
         stringToReturn = stringToEdit.concat(charToAdd).replace(/\r?\n|\r/g, '');
     }
-
+    
     return stringToReturn;
 
 }

@@ -197,10 +197,11 @@ const TuringMachine = () => {
 
                 } else if (currentType === 'comparison') {
                     
-                    let result: [string, number] = comparisonModule(omegaInput, omegaIndex, currentCommand, moduleIndex);
+                    let result: [string, number, number] = comparisonModule(omegaInput, omegaIndex, currentCommand, moduleIndex);
                     omegaInput = result[0];
+                    omegaIndex = result[1];
 
-                    if (result[1] === 1) {
+                    if (result[2] === 1) {
                         moduleIndex = modulesKeys.indexOf(currentModule.firstParameter!)
                         willJump = true;
                     }

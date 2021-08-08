@@ -1189,7 +1189,251 @@ export function comparisonModule(currentOmega: string, currentIndex: number, com
     } else if (command === 'ifl') {
         
     } else if (command === 'ifle') {
-        
+         
+        statesDirection['1'] = 'right';
+        statesDirection['2'] = 'right';
+        statesDirection['3'] = 'left';
+        statesDirection['4'] = 'left';
+        statesDirection['5'] = 'right';
+        statesDirection['6'] = 'left';
+        statesDirection['7'] = 'right';
+        statesDirection['8'] = 'right';
+        statesDirection['9'] = 'left';
+        statesDirection['10'] = 'left';
+        statesDirection['11'] = 'left';
+        statesDirection['12'] = 'left';
+        statesDirection['13'] = 'right';
+        statesDirection['14'] = 'right';
+        statesDirection['15'] = 'left';
+        statesDirection['16'] = 'right';
+        statesDirection['17'] = 'right';
+        statesDirection['18'] = 'left';
+        statesDirection['19'] = 'left';
+        statesDirection['20'] = 'left';
+        statesDirection['21'] = 'left';
+    
+        // For State: 1
+        turingStateTransitions['1'] = {
+            stateTransition: '7'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '2'
+        }
+        turingStates['1'] = turingStateTransitions;
+
+        // For State: 2
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '5'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '3'
+        }
+        turingStates['2'] = turingStateTransitions;
+
+        // For State: 3
+        turingStateTransitions = {};
+        turingStateTransitions['#'] = {
+            stateTransition: '4'
+        }
+        turingStates['3'] = turingStateTransitions;
+
+        // For State: 4
+        turingStateTransitions = {};
+        turingStateTransitions['#'] = {
+            stateTransition: '22'
+        }
+        turingStates['4'] = turingStateTransitions;
+
+        // For State: 5
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '5'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '6'
+        }
+        turingStates['5'] = turingStateTransitions;
+
+        // For State: 6
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '6',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '4'
+        }
+        turingStates['6'] = turingStateTransitions;
+
+        // For State: 7
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '7'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '8'
+        }
+        turingStates['7'] = turingStateTransitions;
+
+        // For State: 8
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '11'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '9'
+        }
+        turingStates['8'] = turingStateTransitions;
+
+        // For State: 9
+        turingStateTransitions = {};
+        turingStateTransitions['#'] = {
+            stateTransition: '10'
+        }
+        turingStates['9'] = turingStateTransitions;
+
+        // For State: 10
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '10',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '23'
+        }
+        turingStates['10'] = turingStateTransitions;
+
+        // For State: 11
+        turingStateTransitions = {};
+        turingStateTransitions['#'] = {
+            stateTransition: '12'
+        }
+        turingStates['11'] = turingStateTransitions;
+
+        // For State: 12
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '13',
+            characterReplacement: 'x'
+        }
+        turingStateTransitions['x'] = {
+            stateTransition: '12'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '16'
+        }
+        turingStates['12'] = turingStateTransitions;
+
+        // For State: 13
+        turingStateTransitions = {};
+        turingStateTransitions['x'] = {
+            stateTransition: '13'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '14'
+        }
+        turingStates['13'] = turingStateTransitions;
+
+        // For State: 14
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '15',
+            characterReplacement: 'x'
+        }
+        turingStateTransitions['x'] = {
+            stateTransition: '14'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '20'
+        }
+        turingStates['14'] = turingStateTransitions;
+
+        // For State: 15
+        turingStateTransitions = {};
+        turingStateTransitions['x'] = {
+            stateTransition: '15'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '12'
+        }
+        turingStates['15'] = turingStateTransitions;
+
+        // For State: 16
+        turingStateTransitions = {};
+        turingStateTransitions['x'] = {
+            stateTransition: '16'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '17'
+        }
+        turingStates['16'] = turingStateTransitions;
+
+        // For State: 17
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '17',
+            characterReplacement: 'x'
+        }
+        turingStateTransitions['x'] = {
+            stateTransition: '17'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '18'
+        }
+        turingStates['17'] = turingStateTransitions;
+
+        // For State: 18
+        turingStateTransitions = {};
+        turingStateTransitions['x'] = {
+            stateTransition: '18',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '19'
+        }
+        turingStates['18'] = turingStateTransitions;
+
+        // For State: 19
+        turingStateTransitions = {};
+        turingStateTransitions['x'] = {
+            stateTransition: '19',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '22'
+        }
+        turingStates['19'] = turingStateTransitions;
+
+        // For State: 20
+        turingStateTransitions = {};
+        turingStateTransitions['x'] = {
+            stateTransition: '20',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '21'
+        }
+        turingStates['20'] = turingStateTransitions;
+
+        // For State: 21
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '21',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['x'] = {
+            stateTransition: '21',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '23'
+        }
+        turingStates['21'] = turingStateTransitions;
+
+        turingStates['22'] = 'ACCEPT';
+        turingStates['23'] = 'REJECT';
+
     }
     
     [newOmegaString, newOmegaIndex, acceptOrReject] = turingMachineExecute(newOmegaString, newOmegaIndex, '1', turingStates, statesDirection, currentStateIndex);

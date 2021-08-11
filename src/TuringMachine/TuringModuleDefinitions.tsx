@@ -38,16 +38,16 @@ function turingMachineExecute(currentOmega: string, currentIndex: number, initia
        characterToBeScanned = newOmegaString[newOmegaIndex];
 
         // For Testing
-        if (currentModuleIndex === 0 ) {
-            console.log(`Current state: ${currentState}`);
-            console.log(`Current omega: ${newOmegaString}`);
-            console.log(`Current index: ${newOmegaIndex}`);
-            console.log(`Current direction: ${turingStatesDirection[currentState]}`);
-            console.log(`Character to be scanned: ${characterToBeScanned}`);
-            console.log(`Current State Instructions:`);
-            console.log(currentStateInstructions);
-            console.log('=======================================')
-        }
+        // if (currentModuleIndex === 0 ) {
+        //     console.log(`Current state: ${currentState}`);
+        //     console.log(`Current omega: ${newOmegaString}`);
+        //     console.log(`Current index: ${newOmegaIndex}`);
+        //     console.log(`Current direction: ${turingStatesDirection[currentState]}`);
+        //     console.log(`Character to be scanned: ${characterToBeScanned}`);
+        //     console.log(`Current State Instructions:`);
+        //     console.log(currentStateInstructions);
+        //     console.log('=======================================')
+        // }
 
        currentState = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].stateTransition;
        let characterToReplace = (currentStateInstructions as TuringCharactersPerStates)[characterToBeScanned].characterReplacement;

@@ -5,6 +5,7 @@ import { isEmptyObject, isNullOrUndefined } from "../Utilities/GeneralHelpers";
 import { Modules } from '../Interfaces/Modules';
 import { comparisonModule, constantModule, copyModule, moveModule, operationModule, shiftModule } from './TuringModuleDefinitions';
 import { addCharacterToTheEnd, trimTrailingChars } from '../Utilities/StringHelpers';
+import { TuringLogging } from '../Interfaces/TuringLogging';
 
 const TuringMachine = () => {
 
@@ -22,6 +23,9 @@ const TuringMachine = () => {
     // Values for the Turing Modules
     const [omegaValue, setOmegaValue] = useState<string>('');
     const [moduleValues, setModuleValues] = useState<Modules>({});
+
+    //Values for logging
+    const [executionLogList, setExecutionLogList] = useState<TuringLogging[]>([])
 
     // On upload of a text file for parsing
     useEffect(() => {
@@ -46,6 +50,7 @@ const TuringMachine = () => {
             // Reset right table
             setTapeIndexValue('');
             setOutputValue('');
+            setExecutionLogList([]);
 
             // Patterns for syntax checking per line
             const oneParameterPattern: RegExp = /^\s*([a-zA-Z0-9_]+)\s*\]\s*(const|shl|shr|copy)\s*-\s*(\d+)\s*$/;
@@ -126,6 +131,7 @@ const TuringMachine = () => {
                 setOmegaValue("");
                 setHasUploaded(false);
                 setModuleValues({});
+                setExecutionLogList([]);
                 return; 
             }
 
@@ -162,9 +168,11 @@ const TuringMachine = () => {
         // Setup initial configuration before execution
         var omegaIndex: number = 0;
         var moduleIndex: number = 0;
+        var currentLogId: number = 0;
+        var currentCommand: string = '';
         var omegaInput: string = omegaValue;
         var modulesKeys: string[] = Object.keys(moduleValues);
-        var currentCommand: string = '';
+        var tempLogList: TuringLogging[] = [];
 
         while (currentCommand !== 'halt') {
 
@@ -214,12 +222,28 @@ const TuringMachine = () => {
 
             }
             
+            // console.log(`Current State: ${currentState}`);
+            // console.log(`Current Command: ${currentCommand}`)
+            // console.log(`Current Tape Head: ${omegaIndex}`)
+            // console.log(`Current Omega: ${omegaInput}`)
+            // console.log(`=================================`)
+
+            let executionLogItem: TuringLogging = {
+                id: currentLogId,
+                command: `${currentState}] ${currentCommand}`,
+                tapeHead: omegaIndex,
+                omega: omegaInput
+            };
+            tempLogList.push(executionLogItem);
+            currentLogId++;
+
             if (!willJump) {
                 moduleIndex++;
             }
 
         }
 
+        setExecutionLogList(tempLogList);
         setTapeIndexValue(String(omegaIndex));
         omegaInput = trimTrailingChars(omegaInput, "#");
         omegaInput = addCharacterToTheEnd(omegaInput, "#");
@@ -290,9 +314,22 @@ const TuringMachine = () => {
                         </tr>
                     </thead>
                     <tbody className="tm-logs-tbody">
-                        <tr>
-                            <td></td>
-                        </tr>
+
+                        {executionLogList.map((log) => (
+
+                            <tr key={log.id}>
+                                <td style={{width: "4.1rem"}}>
+                                    {log.command}
+                                </td>
+                                <td style={{textAlign: "center"}}>
+                                    {log.tapeHead}
+                                </td>
+                                <td>
+                                    <input readOnly className="tm-logs-item" type="text" value = {log.omega}/>
+                                </td>
+                            </tr>
+
+                        ))}
                     </tbody>
                 </table>
 

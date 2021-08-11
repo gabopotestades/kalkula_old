@@ -1,10 +1,10 @@
 import './TwoWayAcceptor.scss'
-import FileUploader from "../Utilities/FileUploader";
-import { useState, useEffect } from "react";
-import { States, StatesDirection } from '../Interfaces/States';
+import FileUploader from '../Utilities/FileUploader';
+import { useState, useEffect } from 'react';
+import { TwoWayAcceptorStates, StatesDirection } from '../Interfaces/AcceptorStates';
 import { removeSpacesAndConcat } from '../Utilities/StringHelpers';
 import { CharactersPerState } from '../Interfaces/CharactersPerState';
-import { isNullOrUndefined, isEmptyObject } from "../Utilities/GeneralHelpers";
+import { isNullOrUndefined, isEmptyObject } from '../Utilities/GeneralHelpers';
 
 const TwoWayAcceptor = () => {
 
@@ -24,7 +24,7 @@ const TwoWayAcceptor = () => {
     const rejectionKeywords:string[] = ["HELL", "REJECT"]
     const [xScannedString, setXScannedString] = useState<string>("");
     const [initialStatesList, setInitialStatesList] = useState<string[]>([]);
-    const [parsedStates, setParsedStates] = useState<States>({});
+    const [parsedStates, setParsedStates] = useState<TwoWayAcceptorStates>({});
     const [parsedStatesDirection, setParsedStatesDirection] = useState<StatesDirection>({});
 
     // Value for result
@@ -88,7 +88,7 @@ const TwoWayAcceptor = () => {
     
             var line: number = 7;
             var passed: boolean = true;
-            var statesToBeCreated: States = {};
+            var statesToBeCreated: TwoWayAcceptorStates = {};
             var statesDirectionToBeCreated: StatesDirection = {};
             pStates.every(state => {
     

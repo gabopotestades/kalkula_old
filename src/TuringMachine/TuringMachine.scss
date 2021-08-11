@@ -1,0 +1,289 @@
+.TuringMachine {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  justify-content: center;
+  max-width: 60rem;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+.tm-modules {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/*#region Left table*/
+
+.tm-modules-table {
+  border-collapse: collapse;
+  background-color: #616161;
+  font-size: 0.9em;
+  min-width: 300px;
+  border-radius: 6px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1.5rem;
+  height: 25.4rem;
+  max-height: 25.4rem;
+}
+
+.tm-modules-table thead tr {
+  color: #ffffff;
+  text-align: left;
+  line-height: 3rem;
+}
+
+.tm-modules-table .title {
+  text-align: center;
+  min-width: auto;
+  font-family: "Oxygen";
+  font-size: 1.5rem;
+}
+
+.tm-modules thead:last-of-type {
+  border-bottom: 2px solid #dddddd;
+}
+
+.tm-modules-table th {
+  padding: 12px 15px;
+}
+
+.tm-modules-table tr {
+  padding: 0;
+}
+
+.omega-tr {
+  line-height: 3rem;
+  height: 3rem;
+  border-bottom: 1px solid #dddddd;
+}
+
+#omegaLabel {
+  font-size: 1.5rem;
+}
+
+#omegaInput {
+  background-color: #353535;
+  color: #ffffff;
+  box-shadow: none;
+  width: 15rem;
+  line-height: 1.5rem;
+  margin-left: 0.5rem;
+  font-family: "Oxygen";
+  font-size: 1rem;
+}
+
+.modules-tr {
+  border-bottom: 1px solid #dddddd;
+  text-align: left;
+  white-space: pre;
+}
+
+#modules-description {
+  vertical-align: top;
+  text-align: left;
+  color: #ffffff;
+}
+
+.modules-description-cell {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.tm-modules-table tbody tr:last-of-type {
+  border-bottom: none;
+}
+
+.tm-modules-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#executeButton {
+  margin-left: 2rem;
+}
+
+/*#endregion Left table*/
+
+.tm-logs {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  text-align: left;
+  margin-left: 16px;
+}
+
+/*#region Right table*/
+
+.tm-logs-table {
+  border-collapse: collapse;
+  background-color: #616161;
+  font-size: 0.9em;
+  min-width: 640px;
+  border-radius: 6px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1.5rem;
+  height: 25.4rem;
+}
+
+.tm-logs-table thead {
+  display: block;
+}
+
+.tm-logs-table thead tr th {
+  color: #ffffff;
+  text-align: left;
+  line-height: 1.55rem;
+  font-weight: normal;
+}
+
+.tm-logs-table .title {
+  text-align: center;
+  min-width: auto;
+  font-family: "Oxygen";
+  font-size: 1.7rem;
+}
+
+.tm-logs-headers {
+  line-height: 2rem;
+  height: 2rem;
+}
+
+.tm-logs-table thead .command {
+  text-align: left;
+  color: #ffffff;
+  font-size: 1rem;
+  width: 4rem;
+}
+
+.tm-logs-table thead .tape-head {
+  text-align: center;
+  color: #ffffff;
+  width: 0.5rem;
+  font-size: 2.5rem;
+}
+
+.tm-logs-table thead .omega {
+  text-align: center;
+  color: #ffffff;
+  min-width: 30rem;
+  font-size: 2.5rem;
+}
+
+.tm-logs thead:last-of-type {
+  border-bottom: 2px solid #dddddd;
+}
+
+.tm-logs-table th,
+.tm-logs-table td {
+  padding: 10px 13px;
+}
+
+.tm-logs-tbody {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  height: 19rem;
+}
+
+.tm-logs-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+  text-align: left;
+}
+
+.tm-logs-table tbody tr:last-of-type {
+  border-bottom: none;
+}
+
+.tm-logs-item {
+  background-color: #535353;
+  color: #ffffff;
+  box-shadow: none;
+  width: 27rem;
+  line-height: 0.5rem;
+  margin-left: 0.5rem;
+  font-family: "Oxygen";
+  font-size: 1rem;
+}
+
+.tm-logs-output {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.tm-logs-output-tapehead {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.tm-logs-output-result {
+  margin-left: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+input[type="text"] {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border: 1px solid #353535;
+  padding-left: 10px;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+}
+
+#tapeLabel {
+  display: inline-block;
+  max-width: 3rem;
+  margin-right: 0.5rem;
+  font-size: 2rem;
+}
+
+#tapeInput {
+  background-color: #353535;
+  color: #fde7b6;
+  box-shadow: none;
+  max-width: 2rem;
+  line-height: 2rem;
+  margin-left: 0.5rem;
+  font-family: "Oxygen";
+  font-size: 1rem;
+}
+
+#outputLabel {
+  display: inline-block;
+  max-width: 3rem;
+  margin-right: 0.5rem;
+  font-size: 2rem;
+}
+
+#outputInput {
+  background-color: #353535;
+  color: #fde7b6;
+  box-shadow: none;
+  min-width: 27rem;
+  line-height: 2rem;
+  margin-left: 0.5rem;
+  font-family: "Oxygen";
+  font-size: 1rem;
+}
+
+/*#endregion Right table*/

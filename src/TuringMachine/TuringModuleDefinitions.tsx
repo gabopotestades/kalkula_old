@@ -2051,14 +2051,17 @@ export function operationModule(currentOmega: string, currentIndex: number, comm
         statesDirection['4'] = 'left';
         statesDirection['5'] = 'left';
         statesDirection['6'] = 'left';
-        statesDirection['7'] = 'left';
+        statesDirection['7'] = 'right';
         statesDirection['8'] = 'left';
-        statesDirection['9'] = 'right';
-        statesDirection['10'] = 'right';
-        statesDirection['11'] = 'left';
+        statesDirection['9'] = 'left';
+        statesDirection['10'] = 'left';
+        statesDirection['11'] = 'right';
         statesDirection['12'] = 'right';
         statesDirection['13'] = 'left';
-        statesDirection['14'] = 'left';
+        statesDirection['14'] = 'right';
+        statesDirection['15'] = 'right';
+        statesDirection['16'] = 'left';
+        statesDirection['17'] = 'left';
     
         // For State: 1
         turingStateTransitions['1'] = {
@@ -2066,7 +2069,7 @@ export function operationModule(currentOmega: string, currentIndex: number, comm
             characterReplacement: 'a'
         }
         turingStateTransitions['#'] = {
-            stateTransition: '9'
+            stateTransition: '11'
         }
         turingStates['1'] = turingStateTransitions;
 
@@ -2083,27 +2086,27 @@ export function operationModule(currentOmega: string, currentIndex: number, comm
         // For State: 3
         turingStateTransitions = {};
         turingStateTransitions['1'] = {
-            stateTransition: '4',
-            characterReplacement: 'a'
+            stateTransition: '3'
         }
         turingStateTransitions['a'] = {
             stateTransition: '3'
         }
         turingStateTransitions['#'] = {
-            stateTransition: '6'
+            stateTransition: '4'
         }
         turingStates['3'] = turingStateTransitions;
 
         // For State: 4
         turingStateTransitions = {};
         turingStateTransitions['1'] = {
-            stateTransition: '4'
+            stateTransition: '5',
+            characterReplacement: 'a'
         }
         turingStateTransitions['a'] = {
             stateTransition: '4'
         }
         turingStateTransitions['#'] = {
-            stateTransition: '5'
+            stateTransition: '7'
         }
         turingStates['4'] = turingStateTransitions;
 
@@ -2112,9 +2115,8 @@ export function operationModule(currentOmega: string, currentIndex: number, comm
         turingStateTransitions['1'] = {
             stateTransition: '5'
         }
-        turingStateTransitions['a'] = {
-            stateTransition: '1',
-            characterReplacement: '1'
+        turingStateTransitions['#'] = {
+            stateTransition: '6'
         }
         turingStates['5'] = turingStateTransitions;
 
@@ -2124,33 +2126,30 @@ export function operationModule(currentOmega: string, currentIndex: number, comm
             stateTransition: '6'
         }
         turingStateTransitions['a'] = {
-            stateTransition: '6',
-            characterReplacement: '1'
-        }
-        turingStateTransitions['#'] = {
-            stateTransition: '7',
+            stateTransition: '1',
             characterReplacement: '1'
         }
         turingStates['6'] = turingStateTransitions;
 
         // For State: 7
         turingStateTransitions = {};
-        turingStateTransitions['1'] = {
+        turingStateTransitions['a'] = {
             stateTransition: '7'
         }
-        turingStateTransitions['a'] = {
-            stateTransition: '8',
-            characterReplacement: '#'
+        turingStateTransitions['#'] = {
+            stateTransition: '8'
         }
         turingStates['7'] = turingStateTransitions;
 
         // For State: 8
         turingStateTransitions = {};
-        turingStateTransitions['1'] = {
-            stateTransition: '8'
+        turingStateTransitions['a'] = {
+            stateTransition: '8',
+            characterReplacement: '1'
         }
         turingStateTransitions['#'] = {
-            stateTransition: '15'
+            stateTransition: '9',
+            characterReplacement: '1'
         }
         turingStates['8'] = turingStateTransitions;
 
@@ -2161,64 +2160,99 @@ export function operationModule(currentOmega: string, currentIndex: number, comm
         }
         turingStateTransitions['a'] = {
             stateTransition: '10',
-            characterReplacement: '1'
+            characterReplacement: '#'
         }
         turingStates['9'] = turingStateTransitions;
 
         // For State: 10
         turingStateTransitions = {};
         turingStateTransitions['1'] = {
-            stateTransition: '11'
-        }
-        turingStateTransitions['a'] = {
-            stateTransition: '10',
-            characterReplacement: '1'
+            stateTransition: '10'
         }
         turingStateTransitions['#'] = {
-            stateTransition: '13'
+            stateTransition: '18'
         }
         turingStates['10'] = turingStateTransitions;
 
         // For State: 11 
         turingStateTransitions = {};
         turingStateTransitions['1'] = {
-            stateTransition: '11'
+            stateTransition: '14'
         }
-        turingStateTransitions['#'] = {
+        turingStateTransitions['a'] = {
             stateTransition: '12',
             characterReplacement: '1'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '13'
         }
         turingStates['11'] = turingStateTransitions;
 
         // For State: 12
         turingStateTransitions = {};
-        turingStateTransitions['1'] = {
-            stateTransition: '8',
-            characterReplacement: '#'
+        turingStateTransitions['a'] = {
+            stateTransition: '12',
+            characterReplacement: '1'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '13'
         }
         turingStates['12'] = turingStateTransitions;
 
-        // For State: 
+        // For State: 13
         turingStateTransitions = {};
         turingStateTransitions['1'] = {
             stateTransition: '13'
         }
         turingStateTransitions['#'] = {
-            stateTransition: '14'
+            stateTransition: '10'
         }
         turingStates['13'] = turingStateTransitions;
 
-        // For State: 14
+        // For State: 14 
         turingStateTransitions = {};
         turingStateTransitions['1'] = {
             stateTransition: '14'
         }
-        turingStateTransitions['#'] = {
+        turingStateTransitions['a'] = {
             stateTransition: '15'
         }
         turingStates['14'] = turingStateTransitions;
-        
-        turingStates['15'] = 'ACCEPT';
+
+        // For State: 15
+        turingStateTransitions = {};
+        turingStateTransitions['a'] = {
+            stateTransition: '15'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '16'
+        }
+        turingStates['15'] = turingStateTransitions;
+
+        // For State: 16
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '17',
+            characterReplacement: '#'
+        }
+        turingStateTransitions['a'] = {
+            stateTransition: '16',
+            characterReplacement: '1'
+        }
+        turingStates['16'] = turingStateTransitions;
+
+        // For State: 17
+        turingStateTransitions = {};
+        turingStateTransitions['1'] = {
+            stateTransition: '17'
+        }
+        turingStateTransitions['#'] = {
+            stateTransition: '10',
+            characterReplacement: '1'
+        }
+        turingStates['17'] = turingStateTransitions;
+
+        turingStates['18'] = 'ACCEPT';
 
     } else if (command === 'add') {
         

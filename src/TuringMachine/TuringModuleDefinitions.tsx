@@ -64,7 +64,7 @@ function turingMachineExecute(currentOmega: string, currentIndex: number, initia
 
     }    
     
-    newOmegaString = trimTrailingChars(newOmegaString, "#");
+    // newOmegaString = trimTrailingChars(newOmegaString, "#");
     newOmegaString = addCharacterToTheEnd(newOmegaString, "#");
     
     return [newOmegaString, newOmegaIndex, acceptedOrRejected]

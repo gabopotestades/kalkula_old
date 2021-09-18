@@ -229,8 +229,8 @@ const TuringMachine = () => {
             // console.log(`Current Omega: ${omegaInput}`)
             // console.log(`=================================`)
 
-            let omegaForDisplay: string = trimTrailingChars(omegaInput, "#");
-            omegaForDisplay = addCharacterToTheEnd(omegaForDisplay, "#");
+            // let omegaForDisplay: string = trimTrailingChars(omegaInput, "#");
+            let omegaForDisplay: string = addCharacterToTheEnd(omegaInput, "#");
 
             let executionLogItem: TuringLogging = {
                 id: currentLogId,
@@ -249,7 +249,7 @@ const TuringMachine = () => {
 
         setExecutionLogList(tempLogList);
         setTapeIndexValue(String(omegaIndex));
-        omegaInput = trimTrailingChars(omegaInput, "#");
+        // omegaInput = trimTrailingChars(omegaInput, "#");
         omegaInput = addCharacterToTheEnd(omegaInput, "#");
         setOutputValue(omegaInput);
 
